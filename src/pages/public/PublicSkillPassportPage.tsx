@@ -13,9 +13,12 @@ import {
 } from 'lucide-react';
 import { studentService } from '../../services/studentService';
 import { Badge } from '../../components/common/Badge';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 export const PublicSkillPassportPage: React.FC = () => {
   const { shareId } = useParams<{ shareId: string }>();
+  const { language, t, getCompetencyName, getLevelName } = useLanguage();
+
   const [passport, setPassport] = useState(studentService.getSkillPassport());
   const profile = studentService.getProfile();
   const skills = studentService.getSkills();
@@ -38,16 +41,16 @@ export const PublicSkillPassportPage: React.FC = () => {
           <div className="w-12 h-12 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center mx-auto text-amber-600 mb-4">
             <Lock className="w-6 h-6" />
           </div>
-          <h2 className="text-lg font-bold text-slate-800">Skill Passport is Private</h2>
+          <h2 className="text-lg font-bold text-slate-800">{t('passport.privateBannerTitle')}</h2>
           <p className="text-xs text-slate-600 mt-2">
-            The owner of this Skill Passport has disabled public sharing. Only authorized college administrators can review internal academic records.
+            {t('passport.privateBannerDesc')}
           </p>
           <div className="mt-6">
             <Link
               to="/"
               className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg bg-blue-700 text-white hover:bg-blue-800"
             >
-              <span>Return to Platform Home</span>
+              <span>{language === 'ta' ? 'முகப்புக்குத் திரும்பு' : 'Return to Platform Home'}</span>
             </Link>
           </div>
         </div>
@@ -71,20 +74,24 @@ export const PublicSkillPassportPage: React.FC = () => {
                 <h1 className="text-xl sm:text-2xl font-bold text-white">{profile.fullName}</h1>
                 <Badge variant="success" size="sm">
                   <ShieldCheck className="w-3 h-3 mr-1 inline" />
-                  Verified Learner
+                  {language === 'ta' ? 'சரிபார்க்கப்பட்ட கற்பவர்' : 'Verified Learner'}
                 </Badge>
               </div>
               <p className="text-xs text-blue-200 mt-0.5">
-                {profile.degree} • Year {profile.yearOfStudy}
+                {profile.degree} • {language === 'ta' ? `ஆண்டு ${profile.yearOfStudy}` : `Year ${profile.yearOfStudy}`}
               </p>
               <p className="text-[11px] text-blue-300/80 mt-0.5">{profile.institution}</p>
             </div>
           </div>
 
           <div className="text-left sm:text-right bg-white/10 px-4 py-2 rounded-xl border border-white/15">
-            <span className="text-[10px] text-blue-200 block uppercase font-semibold">Passport ID</span>
+            <span className="text-[10px] text-blue-200 block uppercase font-semibold">
+              {language === 'ta' ? 'பாஸ்போர்ட் எண்' : 'Passport ID'}
+            </span>
             <span className="text-xs font-mono font-bold text-white">{shareId || passport.shareId}</span>
-            <span className="text-[10px] text-blue-300 block mt-0.5">Updated: {passport.lastUpdated}</span>
+            <span className="text-[10px] text-blue-300 block mt-0.5">
+              {language === 'ta' ? 'புதுப்பிக்கப்பட்டது:' : 'Updated:'} {passport.lastUpdated}
+            </span>
           </div>
         </div>
 
@@ -101,19 +108,23 @@ export const PublicSkillPassportPage: React.FC = () => {
           <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
             <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2">
               <Award className="w-4 h-4 text-blue-700" />
-              <span>Assessment-Validated Competencies</span>
+              <span>{language === 'ta' ? 'மதிப்பீட்டின் மூலம் சரிபார்க்கப்பட்ட திறன்கள்' : 'Assessment-Validated Competencies'}</span>
             </h2>
-            <span className="text-[11px] text-slate-400">Standardized Diagnostic Scores</span>
+            <span className="text-[11px] text-slate-400">
+              {language === 'ta' ? 'நிலையான நோய்நாடல் மதிப்பெண்கள்' : 'Standardized Diagnostic Scores'}
+            </span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {competencies.map((c) => (
               <div key={c.competency} className="bg-slate-50 border border-slate-200/80 rounded-lg p-3">
-                <span className="text-[11px] font-medium text-slate-600 block truncate">{c.competency}</span>
+                <span className="text-[11px] font-medium text-slate-600 block truncate">
+                  {getCompetencyName(c.competency)}
+                </span>
                 <div className="flex items-baseline justify-between mt-1">
                   <span className="text-lg font-bold text-blue-900">{c.score}%</span>
                   <Badge variant={c.score >= 80 ? 'success' : c.score >= 60 ? 'info' : 'warning'} size="sm">
-                    {c.level}
+                    {getLevelName(c.level)}
                   </Badge>
                 </div>
               </div>
@@ -128,9 +139,11 @@ export const PublicSkillPassportPage: React.FC = () => {
           <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
             <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2">
               <Compass className="w-4 h-4 text-emerald-700" />
-              <span>Naan Mudhalvan Completed Training Records</span>
+              <span>{language === 'ta' ? 'நான் முதல்வன் பயிற்சிப் பதிவுகள்' : 'Naan Mudhalvan Completed Training Records'}</span>
             </h2>
-            <span className="text-[11px] text-slate-400">Self-Reported & Verified Courses</span>
+            <span className="text-[11px] text-slate-400">
+              {language === 'ta' ? 'சுயவிவரப் பயிற்சி ஆவணங்கள்' : 'Self-Reported & Verified Courses'}
+            </span>
           </div>
 
           <div className="space-y-3">
@@ -141,7 +154,7 @@ export const PublicSkillPassportPage: React.FC = () => {
                     <h3 className="text-xs font-bold text-slate-800">{r.courseName}</h3>
                     <p className="text-[11px] text-slate-500 mt-0.5">{r.partnerOrganization} • {r.category}</p>
                   </div>
-                  <Badge variant="success" size="sm">{r.status}</Badge>
+                  <Badge variant="success" size="sm">{t('common.completed')}</Badge>
                 </div>
                 <div className="flex flex-wrap gap-1.5 mt-2">
                   {r.skillsLearned.map((s) => (
@@ -161,7 +174,7 @@ export const PublicSkillPassportPage: React.FC = () => {
         <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-2xs">
           <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
             <Code2 className="w-4 h-4 text-blue-700" />
-            <span>Technical Skills & Proficiencies</span>
+            <span>{language === 'ta' ? 'தொழில்நுட்பத் திறன்கள் & தேர்ச்சி' : 'Technical Skills & Proficiencies'}</span>
           </h2>
 
           <div className="flex flex-wrap gap-2">
@@ -171,7 +184,7 @@ export const PublicSkillPassportPage: React.FC = () => {
                 <span className="text-[10px] text-slate-500 ml-1.5">({s.selfProficiency})</span>
                 {s.verifiedScore && (
                   <span className="ml-1 text-[10px] font-bold text-emerald-700">
-                    • Score: {s.verifiedScore}%
+                    • {t('common.overallScore')}: {s.verifiedScore}%
                   </span>
                 )}
               </div>
@@ -185,7 +198,7 @@ export const PublicSkillPassportPage: React.FC = () => {
         <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-2xs">
           <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
             <Briefcase className="w-4 h-4 text-indigo-700" />
-            <span>Featured Technical Projects</span>
+            <span>{language === 'ta' ? 'முக்கிய தொழில்நுட்பத் திட்டங்கள்' : 'Featured Technical Projects'}</span>
           </h2>
 
           <div className="space-y-4">
@@ -197,9 +210,9 @@ export const PublicSkillPassportPage: React.FC = () => {
                 </div>
                 <p className="text-xs text-slate-600 mt-1">{p.description}</p>
                 <div className="flex flex-wrap gap-1.5 mt-2">
-                  {p.technologies.map((t) => (
-                    <span key={t} className="text-[10px] bg-white border border-slate-200 px-2 py-0.5 rounded text-blue-800 font-medium">
-                      {t}
+                  {p.technologies.map((tech) => (
+                    <span key={tech} className="text-[10px] bg-white border border-slate-200 px-2 py-0.5 rounded text-blue-800 font-medium">
+                      {tech}
                     </span>
                   ))}
                 </div>
@@ -214,7 +227,7 @@ export const PublicSkillPassportPage: React.FC = () => {
         <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-2xs">
           <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
             <CheckCircle2 className="w-4 h-4 text-emerald-700" />
-            <span>Industry & Technical Certifications</span>
+            <span>{language === 'ta' ? 'தொழில்துறை & தொழில்நுட்பச் சான்றிதழ்கள்' : 'Industry & Technical Certifications'}</span>
           </h2>
 
           <div className="space-y-3">
@@ -222,7 +235,7 @@ export const PublicSkillPassportPage: React.FC = () => {
               <div key={c.id} className="flex items-center justify-between p-3 rounded-lg border border-slate-200 bg-slate-50">
                 <div>
                   <h3 className="text-xs font-bold text-slate-800">{c.title}</h3>
-                  <p className="text-[11px] text-slate-500">{c.issuingOrg} • Issued: {c.issueDate}</p>
+                  <p className="text-[11px] text-slate-500">{c.issuingOrg} • {c.issueDate}</p>
                 </div>
                 {c.credentialId && (
                   <span className="text-[10px] font-mono text-slate-500 bg-white border border-slate-200 px-2 py-1 rounded">
@@ -238,7 +251,9 @@ export const PublicSkillPassportPage: React.FC = () => {
       {/* Security & Verification Disclaimer */}
       <div className="text-center text-xs text-slate-400 py-4 border-t border-slate-200">
         <p>
-          This public Skill Passport displays only candidate-approved records. Private student contact details and internal academic audit files are kept strictly protected.
+          {language === 'ta'
+            ? 'இந்த பொதுத் திறன் பாஸ்போர்ட் மாணவரால் அங்கீகரிக்கப்பட்ட ஆவணங்களை மட்டுமே காட்டுகிறது. மாணவரின் தனிப்பட்ட தொடர்பு விவரங்கள் பாதுகாக்கப்படுகின்றன.'
+            : 'This public Skill Passport displays only candidate-approved records. Private student contact details and internal academic audit files are kept strictly protected.'}
         </p>
       </div>
     </div>

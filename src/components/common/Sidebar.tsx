@@ -20,6 +20,7 @@ import {
   Compass,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -28,30 +29,31 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const { role } = useAuth();
+  const { t } = useLanguage();
   const location = useLocation();
 
   const studentLinks = [
-    { name: 'Dashboard', path: '/student/dashboard', icon: LayoutDashboard },
-    { name: 'My Profile & Records', path: '/student/profile', icon: UserCheck },
-    { name: 'Competency Assessment', path: '/student/assessment', icon: FileCheck2 },
-    { name: 'My Competency Profile', path: '/student/competency-profile', icon: Award },
-    { name: 'Career Matching & Readiness', path: '/student/career-matching', icon: Briefcase },
-    { name: 'Skill Gap & Roadmap', path: '/student/skill-gaps', icon: GitBranch },
-    { name: 'Learning Materials', path: '/student/learning-materials', icon: BookOpen },
-    { name: 'Progress History', path: '/student/progress-history', icon: History },
-    { name: 'My Skill Passport', path: '/student/skill-passport', icon: QrCode },
-    { name: 'Settings', path: '/student/settings', icon: Settings },
+    { name: t('nav.dashboard'), path: '/student/dashboard', icon: LayoutDashboard },
+    { name: t('nav.profile'), path: '/student/profile', icon: UserCheck },
+    { name: t('nav.assessment'), path: '/student/assessment', icon: FileCheck2 },
+    { name: t('nav.competencyProfile'), path: '/student/competency-profile', icon: Award },
+    { name: t('nav.careerMatching'), path: '/student/career-matching', icon: Briefcase },
+    { name: t('nav.skillGaps'), path: '/student/skill-gaps', icon: GitBranch },
+    { name: t('nav.learningMaterials'), path: '/student/learning-materials', icon: BookOpen },
+    { name: t('nav.progressHistory'), path: '/student/progress-history', icon: History },
+    { name: t('nav.skillPassport'), path: '/student/skill-passport', icon: QrCode },
+    { name: t('nav.settings'), path: '/student/settings', icon: Settings },
   ];
 
   const adminLinks = [
-    { name: 'Dashboard & Analytics', path: '/admin/dashboard', icon: LayoutDashboard },
-    { name: 'Student Overview', path: '/admin/students', icon: Users },
-    { name: 'Assessment Management', path: '/admin/assessments', icon: FileCheck2 },
-    { name: 'Learning Materials', path: '/admin/learning-materials', icon: BookOpen },
-    { name: 'Skill Gaps & Interventions', path: '/admin/interventions', icon: ShieldAlert },
-    { name: 'Career & Competencies', path: '/admin/careers', icon: GraduationCap },
-    { name: 'Reports & Cohort Analytics', path: '/admin/reports', icon: BarChart3 },
-    { name: 'Settings & Access Control', path: '/admin/settings', icon: Sliders },
+    { name: t('nav.adminDashboard'), path: '/admin/dashboard', icon: LayoutDashboard },
+    { name: t('nav.studentOverview'), path: '/admin/students', icon: Users },
+    { name: t('nav.assessmentManagement'), path: '/admin/assessments', icon: FileCheck2 },
+    { name: t('nav.adminMaterials'), path: '/admin/learning-materials', icon: BookOpen },
+    { name: t('nav.interventions'), path: '/admin/interventions', icon: ShieldAlert },
+    { name: t('nav.careers'), path: '/admin/careers', icon: GraduationCap },
+    { name: t('nav.reports'), path: '/admin/reports', icon: BarChart3 },
+    { name: t('nav.adminSettings'), path: '/admin/settings', icon: Sliders },
   ];
 
   const links = role === 'student' ? studentLinks : adminLinks;
@@ -81,7 +83,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             <div>
               <h1 className="text-sm font-bold text-white tracking-wide">NAAN MUDHALVAN</h1>
               <p className="text-[10px] text-blue-200 uppercase tracking-wider font-medium">
-                Competency & Readiness
+                {t('common.platformTitle')}
               </p>
             </div>
           </div>
@@ -96,7 +98,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         {/* Navigation list */}
         <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
           <div className="px-3 pb-2 text-[11px] font-semibold tracking-wider uppercase text-blue-300/70">
-            {role === 'student' ? 'Student Navigation' : 'Faculty Admin Portal'}
+            {role === 'student' ? t('nav.studentNav') : t('nav.facultyNav')}
           </div>
 
           {links.map((link) => {
@@ -126,11 +128,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <div className="flex items-center gap-2 mb-1">
             <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
             <span className="text-slate-300 font-medium capitalize">
-              Role: {role === 'admin' ? 'Faculty Admin' : 'Student'}
+              {role === 'admin' ? t('common.facultyAdminHub') : t('common.studentWorkspace')}
             </span>
           </div>
           <p className="text-[10px] text-slate-400 line-clamp-2">
-            Skill Development Initiative • Academic Project
+            {t('common.platformSubtitle')}
           </p>
         </div>
       </aside>

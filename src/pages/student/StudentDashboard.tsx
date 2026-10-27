@@ -8,16 +8,15 @@ import {
   AlertTriangle,
   BookOpen,
   ArrowRight,
-  Sparkles,
-  ExternalLink,
   Target,
   FileCheck2,
   Compass,
   GraduationCap,
-  ShieldCheck,
   ChevronRight,
+  ExternalLink,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../i18n/LanguageContext';
 import { studentService } from '../../services/studentService';
 import { learningMaterialService } from '../../services/learningMaterialService';
 import { assessmentService } from '../../services/assessmentService';
@@ -29,6 +28,7 @@ import { CompetencyBarChart } from '../../components/charts/CompetencyBarChart';
 
 export const StudentDashboard: React.FC = () => {
   const { user } = useAuth();
+  const { t, language, getCompetencyName, getSeverityName } = useLanguage();
   const navigate = useNavigate();
 
   const [profile, setProfile] = useState(studentService.getProfile());
@@ -73,13 +73,13 @@ export const StudentDashboard: React.FC = () => {
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 text-blue-900 text-[11px] font-bold uppercase tracking-wider mb-2">
             <GraduationCap className="w-3.5 h-3.5 text-blue-700" />
-            <span>Naan Mudhalvan Student Portal • நான் முதல்வன்</span>
+            <span>{t('student.welcomeBannerTag')}</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            வணக்கம், {user?.name ? user.name.split(' ')[0] : 'Preethi'}! 👋
+            {t('student.welcomeGreeting', 'Welcome, {name}!', { name: user?.name ? user.name.split(' ')[0] : 'Preethi' })} 👋
           </h1>
           <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-xl">
-            உங்கள் கல்லூரியின் தொழில் தயார்நிலை மற்றும் திறன் முன்னேற்ற டாஷ்போர்டு.
+            {t('student.welcomeSubtitle')}
           </p>
         </div>
 
@@ -89,26 +89,28 @@ export const StudentDashboard: React.FC = () => {
             className="px-4 py-2.5 text-xs font-bold rounded-xl bg-blue-700 hover:bg-blue-800 text-white transition-all shadow-sm hover:shadow-md flex items-center gap-2"
           >
             <FileCheck2 className="w-4 h-4" />
-            <span>Take Assessment • தேர்வு எழுத</span>
+            <span>{t('student.takeAssessmentBtn')}</span>
           </button>
           <button
             onClick={() => navigate('/student/skill-gaps')}
             className="px-4 py-2.5 text-xs font-bold rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 transition-all shadow-xs flex items-center gap-2"
           >
             <Target className="w-4 h-4 text-blue-600" />
-            <span>View Gaps • குறைபாடுகள்</span>
+            <span>{t('student.viewGapsBtn')}</span>
           </button>
         </div>
       </div>
 
-      {/* 2. Easy 4-Step Visual Guide for All College/Govt School Students */}
+      {/* 2. 4-Step Visual Journey */}
       <div className="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-xs">
         <div className="flex items-center justify-between mb-3.5">
           <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider">
             <Compass className="w-4 h-4 text-blue-700" />
-            <span>எளிய 4 படி வேலைவாய்ப்பு வழிகாட்டி • 4-Step Career Readiness Journey</span>
+            <span>{language === 'ta' ? 'எளிய 4 படி தொழில் தயார்நிலைப் பயணம்' : '4-Step Career Readiness Journey'}</span>
           </span>
-          <span className="text-[11px] text-slate-400 font-medium">Step-by-step guidance</span>
+          <span className="text-[11px] text-slate-400 font-medium">
+            {language === 'ta' ? 'படிபடியான வழிகாட்டுதல்' : 'Step-by-step guidance'}
+          </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -120,8 +122,12 @@ export const StudentDashboard: React.FC = () => {
               <span className="w-6 h-6 rounded-lg bg-blue-700 text-white text-xs font-bold flex items-center justify-center">1</span>
               <ChevronRight className="w-4 h-4 text-blue-500 group-hover:translate-x-0.5 transition-transform" />
             </div>
-            <h3 className="text-xs font-bold text-slate-900 mt-2">1. திறன் தேர்வு (Assess)</h3>
-            <p className="text-[11px] text-slate-600 mt-0.5">Take 20 diagnostic questions to test your real skill level.</p>
+            <h3 className="text-xs font-bold text-slate-900 mt-2">
+              {language === 'ta' ? '1. திறன் தேர்வு (Assess)' : '1. Take Assessment'}
+            </h3>
+            <p className="text-[11px] text-slate-600 mt-0.5">
+              {language === 'ta' ? '20 கேள்விகள் மூலம் உங்கள் உண்மையான திறனை சோதிக்கவும்.' : 'Take 20 diagnostic questions to test your real skill level.'}
+            </p>
           </div>
 
           <div
@@ -132,8 +138,12 @@ export const StudentDashboard: React.FC = () => {
               <span className="w-6 h-6 rounded-lg bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">2</span>
               <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
             </div>
-            <h3 className="text-xs font-bold text-slate-900 mt-2">2. விவர வரைபடம் (Profile)</h3>
-            <p className="text-[11px] text-slate-600 mt-0.5">Radar charts compare your score against industry standard.</p>
+            <h3 className="text-xs font-bold text-slate-900 mt-2">
+              {language === 'ta' ? '2. திறன் வரைபடம் (Profile)' : '2. Competency Profile'}
+            </h3>
+            <p className="text-[11px] text-slate-600 mt-0.5">
+              {language === 'ta' ? 'தொழில்துறை தரத்துடன் உங்கள் மதிப்பெண்களை ஒப்பிடுக.' : 'Radar charts compare your score against industry standard.'}
+            </p>
           </div>
 
           <div
@@ -144,8 +154,12 @@ export const StudentDashboard: React.FC = () => {
               <span className="w-6 h-6 rounded-lg bg-amber-600 text-white text-xs font-bold flex items-center justify-center">3</span>
               <ChevronRight className="w-4 h-4 text-amber-500 group-hover:translate-x-0.5 transition-transform" />
             </div>
-            <h3 className="text-xs font-bold text-slate-900 mt-2">3. குறைபாடுகள் (Bridge Gaps)</h3>
-            <p className="text-[11px] text-slate-600 mt-0.5">Follow the 4-week learning roadmap and finish assigned labs.</p>
+            <h3 className="text-xs font-bold text-slate-900 mt-2">
+              {language === 'ta' ? '3. இடைவெளிகள் (Bridge Gaps)' : '3. Bridge Skill Gaps'}
+            </h3>
+            <p className="text-[11px] text-slate-600 mt-0.5">
+              {language === 'ta' ? '4-வார கற்றல் வழிகாட்டியைப் பின்பற்றி பயிற்சிகளை முடிக்கவும்.' : 'Follow the 4-week learning roadmap and finish assigned labs.'}
+            </p>
           </div>
 
           <div
@@ -156,8 +170,12 @@ export const StudentDashboard: React.FC = () => {
               <span className="w-6 h-6 rounded-lg bg-emerald-600 text-white text-xs font-bold flex items-center justify-center">4</span>
               <ChevronRight className="w-4 h-4 text-emerald-500 group-hover:translate-x-0.5 transition-transform" />
             </div>
-            <h3 className="text-xs font-bold text-slate-900 mt-2">4. பாஸ்போர்ட் (Get Placed)</h3>
-            <p className="text-[11px] text-slate-600 mt-0.5">Share your QR Skill Passport with recruiters and companies.</p>
+            <h3 className="text-xs font-bold text-slate-900 mt-2">
+              {language === 'ta' ? '4. பாஸ்போர்ட் (Get Placed)' : '4. Skill Passport'}
+            </h3>
+            <p className="text-[11px] text-slate-600 mt-0.5">
+              {language === 'ta' ? 'வேலைவாய்ப்புத் தேர்வாளர்களுக்கு QR குறியீட்டைப் பகிரவும்.' : 'Share your QR Skill Passport with recruiters and companies.'}
+            </p>
           </div>
         </div>
       </div>
@@ -168,9 +186,9 @@ export const StudentDashboard: React.FC = () => {
       {/* 4. Dashboard KPI Summary Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
         <StatCard
-          title="Overall Score"
+          title={t('student.overallIndex')}
           value={`${overallScore}%`}
-          subtitle="திறன் குறியீடு • Target: 75%"
+          subtitle={language === 'ta' ? 'இலக்கு: 75%' : 'Target: 75%'}
           icon={Award}
           iconColor="text-blue-700 bg-blue-50 border-blue-200"
           trend={{ value: '+9%', isPositive: true }}
@@ -178,45 +196,45 @@ export const StudentDashboard: React.FC = () => {
         />
 
         <StatCard
-          title="Placement Ready"
+          title={t('student.readiness')}
           value={`${topCareer?.readinessPercentage || 72}%`}
-          subtitle="வேலைவாய்ப்பு தயார்நிலை"
+          subtitle={language === 'ta' ? 'வேலைவாய்ப்புத் தகுதி' : 'Career Readiness'}
           icon={TrendingUp}
           iconColor="text-emerald-700 bg-emerald-50 border-emerald-200"
           onClick={() => navigate('/student/career-matching')}
         />
 
         <StatCard
-          title="Profile Done"
+          title={t('profile.tabPersonal')}
           value={`${profile.profileCompletion}%`}
-          subtitle="சுயவிவரம் • 85% Complete"
+          subtitle={language === 'ta' ? 'சுயவிவர நிறைவு' : 'Profile Completed'}
           icon={UserCheck}
           iconColor="text-indigo-700 bg-indigo-50 border-indigo-200"
           onClick={() => navigate('/student/profile')}
         />
 
         <StatCard
-          title="Tests Completed"
+          title={t('student.recentAttempts')}
           value={attempts.length}
-          subtitle="எழுதிய தேர்வுகள்"
+          subtitle={language === 'ta' ? 'எழுதிய தேர்வுகள்' : 'Evaluations Completed'}
           icon={CheckCircle2}
           iconColor="text-teal-700 bg-teal-50 border-teal-200"
           onClick={() => navigate('/student/progress-history')}
         />
 
         <StatCard
-          title="Priority Gaps"
+          title={t('student.criticalGaps')}
           value={skillGaps.length}
-          subtitle="முக்கிய இடைவெளிகள்"
+          subtitle={language === 'ta' ? 'கவனம் தேவைப்படும் திறன்கள்' : 'Identified Areas'}
           icon={AlertTriangle}
           iconColor="text-amber-700 bg-amber-50 border-amber-200"
           onClick={() => navigate('/student/skill-gaps')}
         />
 
         <StatCard
-          title="Pending Labs"
+          title={t('student.pendingTasks')}
           value={pendingMaterialsCount}
-          subtitle="பேராசிரியர் பயிற்சிகள்"
+          subtitle={language === 'ta' ? 'நிலுவையிலுள்ள பணிகள்' : 'Assigned Modules'}
           icon={BookOpen}
           iconColor="text-rose-700 bg-rose-50 border-rose-200"
           onClick={() => navigate('/student/learning-materials')}
@@ -230,15 +248,15 @@ export const StudentDashboard: React.FC = () => {
           <div className="flex items-center justify-between mb-2">
             <div>
               <h2 className="text-sm sm:text-base font-bold text-slate-900">
-                Competency Distribution • திறன் பரவல்
+                {t('student.distributionTitle')}
               </h2>
-              <p className="text-xs text-slate-500">6 முக்கிய திறன் களங்களில் உங்கள் விநியோகம்</p>
+              <p className="text-xs text-slate-500">{t('student.distributionSubtitle')}</p>
             </div>
             <button
               onClick={() => navigate('/student/competency-profile')}
               className="text-xs text-blue-700 font-bold hover:underline flex items-center gap-1"
             >
-              <span>Detailed View</span>
+              <span>{t('common.viewDetails')}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -250,12 +268,14 @@ export const StudentDashboard: React.FC = () => {
           <div className="flex items-center justify-between mb-2">
             <div>
               <h2 className="text-sm sm:text-base font-bold text-slate-900">
-                Target Benchmark Comparison • ஒப்பீடு
+                {language === 'ta' ? 'இலக்கு ஒப்பீட்டு வரைபடம்' : 'Target Benchmark Comparison'}
               </h2>
-              <p className="text-xs text-slate-500">Current score vs Industry required pass standard (75%)</p>
+              <p className="text-xs text-slate-500">
+                {language === 'ta' ? 'தற்போதைய மதிப்பெண் vs 75% தகுதி வரம்பு' : 'Current score vs Industry required pass standard (75%)'}
+              </p>
             </div>
             <span className="text-[11px] font-semibold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
-              Tech Domain
+              {language === 'ta' ? 'தொழில்நுட்பக் களம்' : 'Tech Domain'}
             </span>
           </div>
           <CompetencyBarChart competencies={competencies} height={280} />
@@ -270,15 +290,15 @@ export const StudentDashboard: React.FC = () => {
             <div>
               <h2 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-amber-600" />
-                <span>Identified Priority Skill Gaps • முக்கிய இடைவெளிகள்</span>
+                <span>{t('student.gapAttention')}</span>
               </h2>
-              <p className="text-xs text-slate-500">வேலைவாய்ப்பிற்கு உடனடியாக சரிசெய்ய வேண்டிய பகுதிகள்</p>
+              <p className="text-xs text-slate-500">{t('student.gapAttentionSubtitle')}</p>
             </div>
             <button
               onClick={() => navigate('/student/skill-gaps')}
               className="text-xs font-bold text-blue-700 hover:underline"
             >
-              View Full Roadmap →
+              {t('student.viewRoadmap')} →
             </button>
           </div>
 
@@ -301,11 +321,11 @@ export const StudentDashboard: React.FC = () => {
                       }
                       size="sm"
                     >
-                      {gap.severity} Gap (-{gap.gapDifference}%)
+                      {getSeverityName(gap.severity)} (-{gap.gapDifference}%)
                     </Badge>
                   </div>
                   <span className="text-xs font-bold text-slate-700">
-                    Current: <span className="text-rose-600 font-extrabold">{gap.currentScore}%</span> / Target: {gap.targetScore}%
+                    {language === 'ta' ? 'தற்போது:' : 'Current:'} <span className="text-rose-600 font-extrabold">{gap.currentScore}%</span> / {language === 'ta' ? 'இலக்கு:' : 'Target:'} {gap.targetScore}%
                   </span>
                 </div>
 
@@ -315,13 +335,13 @@ export const StudentDashboard: React.FC = () => {
 
                 <div className="mt-3 flex items-center justify-between pt-2.5 border-t border-slate-200/70 text-xs">
                   <span className="text-slate-500 text-[11px] font-medium">
-                    🏛️ Faculty remedial lab & video modules ready
+                    🏛️ {language === 'ta' ? 'பேராசிரியர் ஒதுக்கிய கற்றல் பொருட்கள் தயாராக உள்ளன' : 'Faculty remedial lab & video modules ready'}
                   </span>
                   <button
                     onClick={() => navigate('/student/learning-materials')}
                     className="text-blue-700 hover:underline font-bold flex items-center gap-1"
                   >
-                    <span>பயிற்சியைத் தொடங்க • Open Lab</span>
+                    <span>{t('student.openMaterial')}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -337,15 +357,15 @@ export const StudentDashboard: React.FC = () => {
               <div>
                 <h2 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
                   <Target className="w-4 h-4 text-blue-700" />
-                  <span>Top Career Match • முதன்மை வேலை</span>
+                  <span>{t('student.topCareerMatch')}</span>
                 </h2>
-                <p className="text-xs text-slate-500">Vector Fit & Rule-based Readiness</p>
+                <p className="text-xs text-slate-500">{t('student.topCareerSubtitle')}</p>
               </div>
               <button
                 onClick={() => navigate('/student/career-matching')}
                 className="text-xs font-bold text-blue-700 hover:underline"
               >
-                All Roles →
+                {language === 'ta' ? 'அனைத்து பணிகள்' : 'All Roles'} →
               </button>
             </div>
 
@@ -360,7 +380,7 @@ export const StudentDashboard: React.FC = () => {
                 <div className="grid grid-cols-2 gap-3 my-4">
                   <div className="bg-white p-3 rounded-xl border border-slate-200 text-center shadow-2xs">
                     <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
-                      Fit (Cosine Match)
+                      {t('student.careerFit')}
                     </span>
                     <span className="text-2xl font-extrabold text-blue-700 mt-0.5 block">
                       {topCareer.fitPercentage}%
@@ -368,7 +388,7 @@ export const StudentDashboard: React.FC = () => {
                   </div>
                   <div className="bg-white p-3 rounded-xl border border-slate-200 text-center shadow-2xs">
                     <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
-                      Placement Readiness
+                      {t('student.readiness')}
                     </span>
                     <span className="text-2xl font-extrabold text-emerald-700 mt-0.5 block">
                       {topCareer.readinessPercentage}%
@@ -377,7 +397,9 @@ export const StudentDashboard: React.FC = () => {
                 </div>
 
                 <div className="text-xs text-slate-600 bg-white/70 p-2.5 rounded-xl border border-slate-200/60">
-                  <span className="font-bold text-slate-800">முக்கிய இடைவெளி: </span>
+                  <span className="font-bold text-slate-800">
+                    {language === 'ta' ? 'முக்கிய இடைவெளி: ' : 'Primary Gap: '}
+                  </span>
                   <span className="text-rose-700 font-semibold">SQL Indexing, Database ACID</span>
                 </div>
               </div>
@@ -385,12 +407,14 @@ export const StudentDashboard: React.FC = () => {
           </div>
 
           <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-            <span className="text-slate-500 font-medium">சராசரி ஊதியம்: {topCareer?.averageSalaryRange}</span>
+            <span className="text-slate-500 font-medium">
+              {language === 'ta' ? `சராசரி ஊதியம்: ${topCareer?.averageSalaryRange}` : `Average Salary: ${topCareer?.averageSalaryRange}`}
+            </span>
             <button
               onClick={() => navigate('/student/career-matching')}
               className="text-blue-700 font-bold hover:underline"
             >
-              Analyze Requirements
+              {language === 'ta' ? 'தேவைகளை ஆய்வு செய்' : 'Analyze Requirements'}
             </button>
           </div>
         </div>
@@ -402,17 +426,17 @@ export const StudentDashboard: React.FC = () => {
           <div>
             <h2 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
               <BookOpen className="w-4 h-4 text-emerald-700" />
-              <span>Assigned Learning Materials • பாடக் குறிப்புகள்</span>
+              <span>{t('student.facultyAssignedMaterials')}</span>
             </h2>
             <p className="text-xs text-slate-500">
-              பேராசிரியர்கள் உங்களுக்காக ஒதுக்கிய பயிற்சிப் பொருட்கள்
+              {t('student.facultyMaterialsSub')}
             </p>
           </div>
           <button
             onClick={() => navigate('/student/learning-materials')}
             className="text-xs font-bold text-blue-700 hover:underline"
           >
-            View All Materials ({materials.length}) →
+            {language === 'ta' ? `அனைத்து வளங்கள் (${materials.length}) →` : `View All Materials (${materials.length}) →`}
           </button>
         </div>
 
@@ -428,7 +452,7 @@ export const StudentDashboard: React.FC = () => {
             >
               <div className="flex items-start justify-between gap-2">
                 <Badge variant={mat.isCompletedByCurrentStudent ? 'success' : 'warning'} size="sm">
-                  {mat.isCompletedByCurrentStudent ? 'Completed ✓' : 'Pending Action'}
+                  {mat.isCompletedByCurrentStudent ? t('common.completed') : t('common.pending')}
                 </Badge>
                 <span className="text-[11px] font-semibold text-slate-400">{mat.resourceType}</span>
               </div>
@@ -444,7 +468,7 @@ export const StudentDashboard: React.FC = () => {
                   onClick={() => navigate('/student/learning-materials')}
                   className="text-blue-700 font-bold hover:underline flex items-center gap-1"
                 >
-                  <span>{mat.isCompletedByCurrentStudent ? 'Review' : 'Open Lab'}</span>
+                  <span>{mat.isCompletedByCurrentStudent ? t('common.review') : t('materials.openResource')}</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </button>
               </div>

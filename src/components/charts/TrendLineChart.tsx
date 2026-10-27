@@ -9,6 +9,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface TrendLineChartProps {
   data: Array<{
@@ -22,6 +23,8 @@ interface TrendLineChartProps {
 }
 
 export const TrendLineChart: React.FC<TrendLineChartProps> = ({ data, height = 280 }) => {
+  const { language } = useLanguage();
+
   return (
     <div style={{ width: '100%', height }}>
       <ResponsiveContainer width="100%" height="100%">
@@ -41,7 +44,7 @@ export const TrendLineChart: React.FC<TrendLineChartProps> = ({ data, height = 2
           <Line
             type="monotone"
             dataKey="overall"
-            name="Overall Score"
+            name={language === 'ta' ? 'ஒட்டுமொத்த மதிப்பெண்' : 'Overall Score'}
             stroke="#1D4ED8"
             strokeWidth={3}
             dot={{ r: 4, fill: '#1D4ED8' }}
@@ -49,7 +52,7 @@ export const TrendLineChart: React.FC<TrendLineChartProps> = ({ data, height = 2
           <Line
             type="monotone"
             dataKey="sql"
-            name="SQL & DB"
+            name={language === 'ta' ? 'SQL & தரவுத்தளம்' : 'SQL & DB'}
             stroke="#E11D48"
             strokeWidth={2}
             strokeDasharray="4 4"
@@ -58,7 +61,7 @@ export const TrendLineChart: React.FC<TrendLineChartProps> = ({ data, height = 2
           <Line
             type="monotone"
             dataKey="programming"
-            name="Programming"
+            name={language === 'ta' ? 'நிரலாக்கம்' : 'Programming'}
             stroke="#0D9488"
             strokeWidth={2}
             dot={{ r: 3, fill: '#0D9488' }}

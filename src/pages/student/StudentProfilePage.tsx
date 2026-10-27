@@ -21,8 +21,10 @@ import { studentService } from '../../services/studentService';
 import { Badge } from '../../components/common/Badge';
 import { Modal } from '../../components/common/Modal';
 import { Internship } from '../../types';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 export const StudentProfilePage: React.FC = () => {
+  const { t, language } = useLanguage();
   const [activeTab, setActiveTab] = useState<'personal' | 'naan_mudhalvan' | 'skills' | 'certifications' | 'projects' | 'internships'>('personal');
 
   const [profile, setProfile] = useState(studentService.getProfile());
@@ -355,12 +357,12 @@ export const StudentProfilePage: React.FC = () => {
   };
 
   const tabs = [
-    { id: 'personal', label: 'Personal & Academic Info', icon: User },
-    { id: 'naan_mudhalvan', label: 'Naan Mudhalvan Records', icon: BookOpen },
-    { id: 'skills', label: 'Skills & Proficiencies', icon: Code2 },
-    { id: 'certifications', label: 'Certifications', icon: Award },
-    { id: 'projects', label: 'Projects', icon: Briefcase },
-    { id: 'internships', label: 'Internships', icon: GraduationCap },
+    { id: 'personal', label: t('profile.tabPersonal'), icon: User },
+    { id: 'naan_mudhalvan', label: t('profile.tabNm'), icon: BookOpen },
+    { id: 'skills', label: t('profile.tabSkills'), icon: Code2 },
+    { id: 'certifications', label: t('profile.tabCerts'), icon: Award },
+    { id: 'projects', label: t('profile.tabProjects'), icon: Briefcase },
+    { id: 'internships', label: t('profile.tabInternships'), icon: GraduationCap },
   ];
 
   return (
@@ -368,16 +370,16 @@ export const StudentProfilePage: React.FC = () => {
       {/* Page Title & Status */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">My Profile & Learning Records</h1>
+          <h1 className="text-2xl font-bold text-slate-900">{t('profile.pageTitle')}</h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Maintain your academic details, verified skills, and manual Naan Mudhalvan training logs
+            {t('profile.pageSubtitle')}
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-lg text-xs text-blue-800">
             <ShieldCheck className="w-4 h-4 text-blue-700 shrink-0" />
-            <span>Profile Completion: <strong>{profile.profileCompletion}%</strong></span>
+            <span>{t('profile.profileCompletion')}: <strong>{profile.profileCompletion}%</strong></span>
           </div>
         </div>
       </div>
@@ -415,11 +417,11 @@ export const StudentProfilePage: React.FC = () => {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-100 pb-4 gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-sm font-bold text-slate-900">Academic & Personal Details</h2>
-                <Badge variant="info" size="sm">Verified Student Record</Badge>
+                <h2 className="text-sm font-bold text-slate-900">{t('profile.academicRecord')}</h2>
+                <Badge variant="info" size="sm">{t('profile.verifiedRecord')}</Badge>
               </div>
               <p className="text-xs text-slate-500 mt-0.5">
-                Keep your institution, contact, and enrollment information accurate for career placement.
+                {t('profile.academicSubtitle')}
               </p>
             </div>
 
@@ -429,53 +431,57 @@ export const StudentProfilePage: React.FC = () => {
               className="px-4 py-2 text-xs font-semibold rounded-lg bg-blue-700 text-white hover:bg-blue-800 flex items-center gap-2 shadow-2xs transition-all shrink-0"
             >
               <Edit3 className="w-3.5 h-3.5" />
-              <span>Edit Profile</span>
+              <span>{t('profile.editProfile')}</span>
             </button>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
             <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
-              <span className="text-[11px] text-slate-400 block font-semibold uppercase">Full Name</span>
+              <span className="text-[11px] text-slate-400 block font-semibold uppercase">{t('auth.fullName')}</span>
               <span className="text-xs font-bold text-slate-800 mt-1 block">{profile.fullName}</span>
             </div>
 
             <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
-              <span className="text-[11px] text-slate-400 block font-semibold uppercase">Register Number</span>
+              <span className="text-[11px] text-slate-400 block font-semibold uppercase">{t('auth.regNumber')}</span>
               <span className="text-xs font-mono font-bold text-slate-800 mt-1 block">{profile.registerNumber}</span>
             </div>
 
             <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
-              <span className="text-[11px] text-slate-400 block font-semibold uppercase">College Email</span>
+              <span className="text-[11px] text-slate-400 block font-semibold uppercase">{t('profile.collegeEmail')}</span>
               <span className="text-xs font-bold text-slate-800 mt-1 block">{profile.collegeEmail}</span>
             </div>
 
             <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
-              <span className="text-[11px] text-slate-400 block font-semibold uppercase">Institution</span>
+              <span className="text-[11px] text-slate-400 block font-semibold uppercase">{t('profile.institution')}</span>
               <span className="text-xs font-bold text-slate-800 mt-1 block">{profile.institution}</span>
             </div>
 
             <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
-              <span className="text-[11px] text-slate-400 block font-semibold uppercase">Degree & Department</span>
+              <span className="text-[11px] text-slate-400 block font-semibold uppercase">{t('profile.degree')}</span>
               <span className="text-xs font-bold text-slate-800 mt-1 block">{profile.degree}</span>
             </div>
 
             <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
-              <span className="text-[11px] text-slate-400 block font-semibold uppercase">Year & Semester</span>
-              <span className="text-xs font-bold text-slate-800 mt-1 block">Year {profile.yearOfStudy} (Semester {profile.currentSemester})</span>
+              <span className="text-[11px] text-slate-400 block font-semibold uppercase">{language === 'ta' ? 'ஆண்டு & செமஸ்டர்' : 'Year & Semester'}</span>
+              <span className="text-xs font-bold text-slate-800 mt-1 block">
+                {language === 'ta'
+                  ? `ஆண்டு ${profile.yearOfStudy} (செமஸ்டர் ${profile.currentSemester})`
+                  : `Year ${profile.yearOfStudy} (Semester ${profile.currentSemester})`}
+              </span>
             </div>
 
             <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
-              <span className="text-[11px] text-slate-400 block font-semibold uppercase">Cumulative CGPA</span>
+              <span className="text-[11px] text-slate-400 block font-semibold uppercase">{t('profile.cgpa')}</span>
               <span className="text-xs font-bold text-emerald-700 mt-1 block">{profile.cgpa} / 10.0</span>
             </div>
 
             <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
-              <span className="text-[11px] text-slate-400 block font-semibold uppercase">Personal Email</span>
+              <span className="text-[11px] text-slate-400 block font-semibold uppercase">{t('profile.personalEmail')}</span>
               <span className="text-xs font-bold text-slate-800 mt-1 block">{profile.personalEmail || '—'}</span>
             </div>
 
             <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
-              <span className="text-[11px] text-slate-400 block font-semibold uppercase">Contact Phone</span>
+              <span className="text-[11px] text-slate-400 block font-semibold uppercase">{t('profile.phone')}</span>
               <span className="text-xs font-bold text-slate-800 mt-1 block">{profile.phone || '—'}</span>
             </div>
           </div>
@@ -496,13 +502,13 @@ export const StudentProfilePage: React.FC = () => {
           </div>
 
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-slate-900">Enrolled & Completed Courses</h2>
+            <h2 className="text-sm font-bold text-slate-900">{language === 'ta' ? 'பதிவுசெய்த & முடித்த பயிற்சிகள்' : 'Enrolled & Completed Courses'}</h2>
             <button
               onClick={() => setIsNmModalOpen(true)}
               className="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-blue-700 text-white hover:bg-blue-800 flex items-center gap-1.5 shadow-2xs"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>Add Learning Record</span>
+              <span>{t('profile.addRecord')}</span>
             </button>
           </div>
 
@@ -573,9 +579,11 @@ export const StudentProfilePage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-sm font-bold text-slate-900">Technical & Analytical Skills</h2>
+              <h2 className="text-sm font-bold text-slate-900">{t('profile.tabSkills')}</h2>
               <p className="text-xs text-slate-500">
-                Self-reported skills are clearly distinguished from assessment-validated scores
+                {language === 'ta'
+                  ? 'சுய-மதிப்பீட்டுத் திறன்கள் தேர்வு முடிவுகளிலிருந்து தெளிவாக வேறுபடுத்திக் காட்டப்படுகின்றன'
+                  : 'Self-reported skills are clearly distinguished from assessment-validated scores'}
               </p>
             </div>
             <button
@@ -583,7 +591,7 @@ export const StudentProfilePage: React.FC = () => {
               className="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-blue-700 text-white hover:bg-blue-800 flex items-center gap-1.5 shadow-2xs"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>Add Skill</span>
+              <span>{t('profile.addSkill')}</span>
             </button>
           </div>
 
@@ -610,13 +618,13 @@ export const StudentProfilePage: React.FC = () => {
                 <p className="text-xs text-slate-600 mt-2">{s.evidenceDescription}</p>
 
                 <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
-                  <span className="text-[11px] text-slate-500">Assessment Validation:</span>
+                  <span className="text-[11px] text-slate-500">{language === 'ta' ? 'தேர்வு சரிபார்ப்பு:' : 'Assessment Validation:'}</span>
                   {s.verifiedScore ? (
                     <span className="font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 text-xs">
-                      Verified: {s.verifiedScore}%
+                      {language === 'ta' ? `சரிபார்க்கப்பட்டது: ${s.verifiedScore}%` : `Verified: ${s.verifiedScore}%`}
                     </span>
                   ) : (
-                    <span className="text-slate-400 text-[11px] italic">Not Yet Evaluated</span>
+                    <span className="text-slate-400 text-[11px] italic">{language === 'ta' ? 'இன்னும் மதிப்பிடப்படவில்லை' : 'Not Yet Evaluated'}</span>
                   )}
                 </div>
               </div>
@@ -629,13 +637,13 @@ export const StudentProfilePage: React.FC = () => {
       {activeTab === 'certifications' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-slate-900">Industry & Professional Certifications</h2>
+            <h2 className="text-sm font-bold text-slate-900">{t('profile.tabCerts')}</h2>
             <button
               onClick={() => setIsCertModalOpen(true)}
               className="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-blue-700 text-white hover:bg-blue-800 flex items-center gap-1.5 shadow-2xs"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>Add Certification</span>
+              <span>{t('profile.addCert')}</span>
             </button>
           </div>
 
@@ -644,7 +652,7 @@ export const StudentProfilePage: React.FC = () => {
               <div key={c.id} className="bg-white p-4 rounded-xl border border-slate-200/90 shadow-2xs flex items-center justify-between">
                 <div>
                   <h3 className="text-xs font-bold text-slate-900">{c.title}</h3>
-                  <p className="text-xs text-slate-500">{c.issuingOrg} • Issued: {c.issueDate}</p>
+                  <p className="text-xs text-slate-500">{c.issuingOrg} • {language === 'ta' ? 'வழங்கிய தேதி: ' : 'Issued: '}{c.issueDate}</p>
                   {c.credentialId && <p className="text-[11px] text-slate-400 font-mono mt-0.5">Credential: {c.credentialId}</p>}
                 </div>
                 <button
@@ -664,13 +672,13 @@ export const StudentProfilePage: React.FC = () => {
       {activeTab === 'projects' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-slate-900">Academic & Independent Projects</h2>
+            <h2 className="text-sm font-bold text-slate-900">{t('profile.tabProjects')}</h2>
             <button
               onClick={() => setIsProjectModalOpen(true)}
               className="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-blue-700 text-white hover:bg-blue-800 flex items-center gap-1.5 shadow-2xs"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>Add Project</span>
+              <span>{t('profile.addProject')}</span>
             </button>
           </div>
 
@@ -708,9 +716,11 @@ export const StudentProfilePage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
             <div>
-              <h2 className="text-sm font-bold text-slate-900">Internship Experiences</h2>
+              <h2 className="text-sm font-bold text-slate-900">{t('profile.tabInternships')}</h2>
               <p className="text-xs text-slate-500 mt-0.5">
-                Document hands-on industry internships, employment types, verified roles, and certificate proofs.
+                {language === 'ta'
+                  ? 'நிறுவனப் பயிற்சிகள், பணி வகைகள் மற்றும் சான்றிதழ் விவரங்களை ஆவணப்படுத்தவும்.'
+                  : 'Document hands-on industry internships, employment types, verified roles, and certificate proofs.'}
               </p>
             </div>
             <button
@@ -719,7 +729,7 @@ export const StudentProfilePage: React.FC = () => {
               className="px-4 py-2 text-xs font-semibold rounded-lg bg-blue-700 text-white hover:bg-blue-800 flex items-center gap-1.5 shadow-2xs shrink-0"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>Add Internship</span>
+              <span>{t('profile.addInternship')}</span>
             </button>
           </div>
 

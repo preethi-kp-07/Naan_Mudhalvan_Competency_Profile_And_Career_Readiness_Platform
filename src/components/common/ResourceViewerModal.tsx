@@ -11,11 +11,11 @@ import {
   BookOpen,
   Copy,
   Check,
-  Download,
   AlertCircle,
 } from 'lucide-react';
 import { LearningMaterial } from '../../types';
 import { Badge } from './Badge';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface ResourceViewerModalProps {
   isOpen: boolean;
@@ -31,6 +31,7 @@ export const ResourceViewerModal: React.FC<ResourceViewerModalProps> = ({
   onToggleComplete,
 }) => {
   const [copiedQuery, setCopiedQuery] = useState(false);
+  const { t, language } = useLanguage();
 
   if (!isOpen || !material) return null;
 
@@ -77,12 +78,12 @@ export const ResourceViewerModal: React.FC<ResourceViewerModalProps> = ({
           <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex flex-wrap items-center justify-between gap-3 text-[11px] text-slate-600">
             <div className="flex items-center gap-1.5">
               <User className="w-3.5 h-3.5 text-slate-400" />
-              <span>Assigned By: <strong>{material.uploaderName}</strong></span>
+              <span>{t('materials.assignedBy')}: <strong>{material.uploaderName}</strong></span>
             </div>
             <div className="flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5 text-slate-400" />
-              <span>Assigned: {material.assignedDate}</span>
-              {material.deadline && <span className="text-rose-700 font-bold ml-1">• Due: {material.deadline}</span>}
+              <span>{t('common.status')}: {material.assignedDate}</span>
+              {material.deadline && <span className="text-rose-700 font-bold ml-1">• {t('materials.deadline')}: {material.deadline}</span>}
             </div>
             {material.fileSizeOrDuration && (
               <span className="font-medium text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">
@@ -93,7 +94,7 @@ export const ResourceViewerModal: React.FC<ResourceViewerModalProps> = ({
 
           {/* Description */}
           <div>
-            <h3 className="text-xs font-bold text-slate-900 mb-1">Learning Objective & Context</h3>
+            <h3 className="text-xs font-bold text-slate-900 mb-1">{t('materials.overview')}</h3>
             <p className="text-slate-600 leading-relaxed">{material.description}</p>
           </div>
 
@@ -101,19 +102,19 @@ export const ResourceViewerModal: React.FC<ResourceViewerModalProps> = ({
           {material.resourceType === 'PDF Notes' && (
             <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-900 text-slate-100">
               <div className="bg-slate-800 px-4 py-2 flex items-center justify-between text-xs text-slate-300">
-                <span>In-App Faculty Reader • {material.title}</span>
+                <span>{language === 'ta' ? 'செயலி-உள் பேராசிரியர் குறிப்பேடு' : 'In-App Faculty Reader'} • {material.title}</span>
                 <span className="text-[11px] text-slate-400">Page 1 of 8</span>
               </div>
               <div className="p-6 space-y-4 max-h-72 overflow-y-auto font-mono text-[11px] leading-relaxed text-slate-200">
                 <div className="p-3 bg-slate-800/80 rounded-lg border border-slate-700">
-                  <h4 className="text-xs font-bold text-amber-300 mb-1">Module Overview: Core Theoretical Fundamentals</h4>
+                  <h4 className="text-xs font-bold text-amber-300 mb-1">{t('materials.overview')}</h4>
                   <p className="text-slate-300 font-sans">
                     {material.content || `This comprehensive tutorial notes guide has been prepared by faculty to directly target student skill gaps in ${material.relatedSkill}. Key takeaways include relational calculus, multi-table index lookups, and transaction deadlock avoidance.`}
                   </p>
                 </div>
 
                 <div className="space-y-2 text-slate-300 font-sans text-xs">
-                  <h5 className="font-bold text-white">Key Concepts Covered:</h5>
+                  <h5 className="font-bold text-white">{t('materials.objectives')}:</h5>
                   <ul className="list-disc list-inside space-y-1 text-[11px] text-slate-300">
                     <li>Execution flow: FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY</li>
                     <li>Avoiding Cartesian products with explicit INNER and LEFT JOIN conditions</li>
@@ -130,13 +131,13 @@ export const ResourceViewerModal: React.FC<ResourceViewerModalProps> = ({
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-bold text-amber-950 flex items-center gap-1.5">
                   <Code2 className="w-4 h-4 text-amber-600" />
-                  <span>Hands-on Interactive Lab Challenge</span>
+                  <span>{t('materials.practiceChallenge')}</span>
                 </h4>
                 <Badge variant="warning" size="sm">25 Practice Problems</Badge>
               </div>
 
               <p className="text-xs text-slate-700">
-                <strong>Challenge #1:</strong> Write an optimized query to calculate the average placement competency score for all students grouped by department, having more than 5 completed assessments.
+                <strong>{t('materials.challengeTask')}:</strong> Write an optimized query to calculate the average placement competency score for all students grouped by department, having more than 5 completed assessments.
               </p>
 
               <div className="relative bg-slate-900 text-slate-100 p-3 rounded-lg font-mono text-[11px]">
@@ -165,7 +166,7 @@ export const ResourceViewerModal: React.FC<ResourceViewerModalProps> = ({
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-bold text-blue-950 flex items-center gap-1.5">
                   <Video className="w-4 h-4 text-blue-600" />
-                  <span>Faculty Seminar Recording</span>
+                  <span>{language === 'ta' ? 'பேராசிரியர் காணொளி விரிவுரை' : 'Faculty Seminar Recording'}</span>
                 </h4>
                 <span className="text-[11px] text-blue-700 font-semibold">{material.fileSizeOrDuration || '45 mins'}</span>
               </div>
@@ -183,10 +184,10 @@ export const ResourceViewerModal: React.FC<ResourceViewerModalProps> = ({
             <div className="border border-teal-200 rounded-xl p-4 bg-teal-50/30 space-y-2">
               <h4 className="text-xs font-bold text-teal-950 flex items-center gap-1.5">
                 <BookOpen className="w-4 h-4 text-teal-700" />
-                <span>Curated Industry Reference Documentation</span>
+                <span>{language === 'ta' ? 'தொழில்துறை வழிகாட்டி ஆவணம்' : 'Curated Industry Reference Documentation'}</span>
               </h4>
               <p className="text-xs text-slate-600">
-                This external technical reference link has been approved by faculty for reading:
+                {language === 'ta' ? 'பேராசிரியரால் அங்கீகரிக்கப்பட்ட வெளிப்புற தொழில்நுட்ப இணைப்பு:' : 'This external technical reference link has been approved by faculty for reading:'}
               </p>
               <div className="p-2.5 bg-white border border-slate-200 rounded-lg flex items-center justify-between text-xs">
                 <span className="font-mono text-slate-700 truncate max-w-md">{material.url}</span>
@@ -196,7 +197,7 @@ export const ResourceViewerModal: React.FC<ResourceViewerModalProps> = ({
                   rel="noreferrer"
                   className="text-blue-700 font-semibold hover:underline flex items-center gap-1"
                 >
-                  <span>Visit Guide</span>
+                  <span>{language === 'ta' ? 'வழிகாட்டியைப் பார்' : 'Visit Guide'}</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               </div>
@@ -206,7 +207,7 @@ export const ResourceViewerModal: React.FC<ResourceViewerModalProps> = ({
           <div className="bg-slate-50 border border-slate-200 p-3 rounded-xl text-[11px] text-slate-500 flex items-start gap-2">
             <AlertCircle className="w-4 h-4 text-blue-700 shrink-0 mt-0.5" />
             <span>
-              <strong>Faculty Management System:</strong> This learning material is managed directly inside your institution's competency platform. Marking it as completed updates your learning roadmap progress and informs your faculty mentor.
+              <strong>{language === 'ta' ? 'கல்லூரி மேலாண்மை அமைப்பு:' : 'Faculty Management System:'}</strong> {language === 'ta' ? 'இக்கற்றல் பொருள் உங்கள் கல்வி நிறுவன தளத்தில் நேரடியாக நிர்வகிக்கப்படுகிறது. இதை முடித்ததாகக் குறிப்பது உங்கள் கற்றல் முன்னேற்றத்தைப் புதுப்பிக்கும்.' : 'This learning material is managed directly inside your institution\'s competency platform. Marking it as completed updates your learning roadmap progress and informs your faculty mentor.'}
             </span>
           </div>
         </div>
@@ -218,7 +219,7 @@ export const ResourceViewerModal: React.FC<ResourceViewerModalProps> = ({
             onClick={onClose}
             className="px-4 py-2 text-xs font-medium text-slate-700 border border-slate-300 rounded-lg hover:bg-slate-100 transition-colors"
           >
-            Close Viewer
+            {t('common.close')}
           </button>
 
           <div className="flex items-center gap-2">
@@ -236,7 +237,7 @@ export const ResourceViewerModal: React.FC<ResourceViewerModalProps> = ({
                 }`}
               >
                 <CheckCircle2 className="w-4 h-4" />
-                <span>{isDone ? 'Mark as Incomplete' : 'Mark Material as Completed'}</span>
+                <span>{isDone ? (language === 'ta' ? 'நிறைவடையாததாகக் குறி' : 'Mark as Incomplete') : t('materials.markCompleteBtn')}</span>
               </button>
             )}
           </div>

@@ -12,9 +12,11 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 export const LoginPage: React.FC = () => {
   const { login } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -27,7 +29,7 @@ export const LoginPage: React.FC = () => {
     e.preventDefault();
     setError(null);
     if (!email || !password) {
-      setError('Please provide both email address and password.');
+      setError(t('auth.fillAllFields'));
       return;
     }
 
@@ -40,7 +42,7 @@ export const LoginPage: React.FC = () => {
         navigate('/student/dashboard');
       }
     } catch (err: any) {
-      setError(err.message || 'Login failed.');
+      setError(err.message || t('auth.loginFailed'));
     } finally {
       setLoading(false);
     }
@@ -68,10 +70,10 @@ export const LoginPage: React.FC = () => {
             <Compass className="w-6 h-6 text-blue-400" />
           </div>
           <h2 className="mt-4 text-2xl font-bold text-slate-900 tracking-tight">
-            Sign in to your Account
+            {t('auth.signInTitle')}
           </h2>
           <p className="mt-1 text-xs text-slate-500">
-            Naan Mudhalvan Competency Profile and Career Readiness Platform
+            {t('auth.signInSubtitle')}
           </p>
         </div>
 
@@ -80,11 +82,11 @@ export const LoginPage: React.FC = () => {
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="w-4 h-4 text-blue-700" />
             <span className="text-xs font-bold text-blue-900 uppercase tracking-wider">
-              DEMO MODE • 1-Click Evaluation Logins
+              {t('auth.demoModeBanner')}
             </span>
           </div>
           <p className="text-[11px] text-blue-800 mb-3 leading-relaxed">
-            Select a verified profile to test role-specific dashboards, skill-gap analysis, and faculty learning material assignment:
+            {t('auth.demoModeDesc')}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <button
@@ -93,7 +95,7 @@ export const LoginPage: React.FC = () => {
               className="flex items-center justify-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg bg-blue-700 text-white hover:bg-blue-800 transition-colors shadow-2xs"
             >
               <UserCheck className="w-3.5 h-3.5" />
-              <span>Student (Preethi)</span>
+              <span>{t('auth.studentDemoButton')}</span>
             </button>
             <button
               type="button"
@@ -101,7 +103,7 @@ export const LoginPage: React.FC = () => {
               className="flex items-center justify-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg bg-emerald-700 text-white hover:bg-emerald-800 transition-colors shadow-2xs"
             >
               <GraduationCap className="w-3.5 h-3.5" />
-              <span>Faculty (Dr. Sundaram)</span>
+              <span>{t('auth.facultyDemoButton')}</span>
             </button>
           </div>
         </div>
@@ -117,7 +119,7 @@ export const LoginPage: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                College / Institutional Email
+                {t('auth.emailLabel')}
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
@@ -125,7 +127,7 @@ export const LoginPage: React.FC = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="e.g. preethi@college.edu"
+                  placeholder={t('auth.emailPlaceholder')}
                   required
                   className="w-full pl-9 pr-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                 />
@@ -133,7 +135,7 @@ export const LoginPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Password</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">{t('auth.passwordLabel')}</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
                 <input
@@ -155,9 +157,9 @@ export const LoginPage: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-between text-xs pt-1">
-              <span className="text-slate-500">Demo Password: demo123</span>
+              <span className="text-slate-500">{t('auth.demoPasswordNote')}</span>
               <span className="text-blue-600 font-medium cursor-pointer hover:underline">
-                Forgot password?
+                {t('auth.forgotPassword')}
               </span>
             </div>
 
@@ -166,15 +168,15 @@ export const LoginPage: React.FC = () => {
               disabled={loading}
               className="w-full py-2.5 px-4 text-xs font-semibold text-white bg-blue-700 hover:bg-blue-800 disabled:opacity-50 rounded-lg shadow-xs transition-colors flex items-center justify-center gap-2"
             >
-              <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
+              <span>{loading ? t('auth.authenticating') : t('auth.signInButton')}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
 
           <div className="mt-6 pt-4 border-t border-slate-100 text-center text-xs text-slate-600">
-            Don't have an account?{' '}
+            {t('auth.dontHaveAccount')}{' '}
             <Link to="/register" className="text-blue-700 font-semibold hover:underline">
-              Register as Student
+              {t('auth.registerAsStudent')}
             </Link>
           </div>
         </div>

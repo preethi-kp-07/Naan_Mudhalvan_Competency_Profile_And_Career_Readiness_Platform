@@ -11,6 +11,7 @@ import {
   ReferenceLine,
 } from 'recharts';
 import { CompetencyScore } from '../../types';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface CompetencyBarChartProps {
   competencies: CompetencyScore[];
@@ -21,13 +22,18 @@ export const CompetencyBarChart: React.FC<CompetencyBarChartProps> = ({
   competencies,
   height = 300,
 }) => {
-  const data = competencies.map((c) => ({
-    name: c.competency.length > 16 ? c.competency.slice(0, 14) + '..' : c.competency,
-    fullName: c.competency,
-    Current: c.score,
-    Target: c.targetScore,
-    isGap: c.score < c.targetScore,
-  }));
+  const { language, getCompetencyName } = useLanguage();
+
+  const data = competencies.map((c) => {
+    const locName = getCompetencyName(c.competency);
+    return {
+      name: locName.length > 18 ? locName.slice(0, 16) + '..' : locName,
+      fullName: locName,
+      Current: c.score,
+      Target: c.targetScore,
+      isGap: c.score < c.targetScore,
+    };
+  });
 
   const CustomBarTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -42,24 +48,24 @@ export const CompetencyBarChart: React.FC<CompetencyBarChartProps> = ({
             <div className="flex items-center justify-between gap-4">
               <span className="text-slate-600 flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block" />
-                <span>Your Score (மதிப்பெண்):</span>
+                <span>{language === 'ta' ? 'உங்கள் மதிப்பெண்:' : 'Your Score:'}</span>
               </span>
               <strong className="text-blue-700 font-bold">{item.Current}%</strong>
             </div>
             <div className="flex items-center justify-between gap-4">
               <span className="text-slate-600 flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-slate-400 inline-block" />
-                <span>Target Score (இலக்கு):</span>
+                <span>{language === 'ta' ? 'இலக்கு மதிப்பெண்:' : 'Target Benchmark:'}</span>
               </span>
               <strong className="text-slate-700 font-bold">{item.Target}%</strong>
             </div>
             {gap > 0 ? (
               <div className="pt-1.5 border-t border-slate-100 text-[11px] text-amber-700 font-medium">
-                ⚠️ Gap: {gap}% below placement standard
+                {language === 'ta' ? `⚠️ இடைவெளி: ${gap}% தகுதிக்குக் குறைவு` : `⚠️ Gap: ${gap}% below placement standard`}
               </div>
             ) : (
               <div className="pt-1.5 border-t border-slate-100 text-[11px] text-emerald-700 font-medium">
-                ✓ Meets or exceeds target standard!
+                {language === 'ta' ? '✓ தகுதி தரத்தை எட்டியுள்ளது!' : '✓ Meets or exceeds target standard!'}
               </div>
             )}
           </div>
@@ -93,7 +99,7 @@ export const CompetencyBarChart: React.FC<CompetencyBarChartProps> = ({
             stroke="#059669"
             strokeDasharray="4 4"
             label={{
-              value: '75% Pass Standard',
+              value: language === 'ta' ? '75% தகுதி வரம்பு' : '75% Pass Standard',
               position: 'insideTopLeft',
               fill: '#059669',
               fontSize: 10,
@@ -101,14 +107,14 @@ export const CompetencyBarChart: React.FC<CompetencyBarChartProps> = ({
             }}
           />
           <Bar
-            name="Your Score"
+            name={language === 'ta' ? 'உங்கள் மதிப்பெண்' : 'Your Score'}
             dataKey="Current"
             fill="#1D4ED8"
             radius={[6, 6, 0, 0]}
             barSize={18}
           />
           <Bar
-            name="Target Benchmark"
+            name={language === 'ta' ? 'இலக்கு வரம்பு' : 'Target Benchmark'}
             dataKey="Target"
             fill="#CBD5E1"
             radius={[6, 6, 0, 0]}

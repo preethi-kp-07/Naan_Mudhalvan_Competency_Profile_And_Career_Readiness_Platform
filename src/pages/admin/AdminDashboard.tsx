@@ -18,8 +18,10 @@ import { adminService } from '../../services/adminService';
 import { learningMaterialService } from '../../services/learningMaterialService';
 import { StatCard } from '../../components/common/StatCard';
 import { Badge } from '../../components/common/Badge';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 export const AdminDashboard: React.FC = () => {
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const cohort = adminService.getCohortSummary();
   const [materials, setMaterials] = useState(learningMaterialService.getAllMaterials());
@@ -36,9 +38,9 @@ export const AdminDashboard: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Faculty & Admin Overview Dashboard</h1>
+          <h1 className="text-2xl font-bold text-slate-900">{t('admin.dashboardTitle')}</h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Cohort competency metrics, placement readiness analytics, and proactive skill-gap interventions
+            {t('admin.dashboardSubtitle')}
           </p>
         </div>
 
@@ -48,7 +50,7 @@ export const AdminDashboard: React.FC = () => {
             className="px-3.5 py-2 text-xs font-semibold rounded-lg bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 transition-colors shadow-2xs flex items-center gap-1.5"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>Export CSV</span>
+            <span>{t('common.exportCSV')}</span>
           </button>
 
           <button
@@ -56,7 +58,7 @@ export const AdminDashboard: React.FC = () => {
             className="px-3.5 py-2 text-xs font-semibold rounded-lg bg-blue-700 hover:bg-blue-800 text-white transition-colors shadow-xs flex items-center gap-1.5"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Assign Material</span>
+            <span>{t('admin.assignMaterial')}</span>
           </button>
         </div>
       </div>
@@ -64,54 +66,54 @@ export const AdminDashboard: React.FC = () => {
       {/* KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
         <StatCard
-          title="Active Students"
+          title={language === 'ta' ? 'செயலில் உள்ள மாணவர்கள்' : 'Active Students'}
           value={cohort.activeStudents}
-          subtitle={`Total: ${cohort.totalStudents} enrolled`}
+          subtitle={language === 'ta' ? `மொத்தம்: ${cohort.totalStudents} மாணவர்கள்` : `Total: ${cohort.totalStudents} enrolled`}
           icon={Users}
           iconColor="text-blue-700 bg-blue-50 border-blue-200"
           onClick={() => navigate('/admin/students')}
         />
 
         <StatCard
-          title="Avg Competency"
+          title={language === 'ta' ? 'சராசரித் திறன்' : 'Avg Competency'}
           value={`${cohort.averageCompetencyScore}%`}
-          subtitle="Target: 75.0%"
+          subtitle={language === 'ta' ? 'இலக்கு: 75.0%' : 'Target: 75.0%'}
           icon={Award}
           iconColor="text-emerald-700 bg-emerald-50 border-emerald-200"
           onClick={() => navigate('/admin/reports')}
         />
 
         <StatCard
-          title="Avg Readiness"
+          title={language === 'ta' ? 'சராசரித் தயார்நிலை' : 'Avg Readiness'}
           value={`${cohort.averageCareerReadiness}%`}
-          subtitle="Across all roles"
+          subtitle={language === 'ta' ? 'அனைத்துப் பாத்திரங்களிலும்' : 'Across all roles'}
           icon={TrendingUp}
           iconColor="text-indigo-700 bg-indigo-50 border-indigo-200"
           onClick={() => navigate('/admin/careers')}
         />
 
         <StatCard
-          title="Assessment Rate"
+          title={language === 'ta' ? 'மதிப்பீட்டு விகிதம்' : 'Assessment Rate'}
           value={`${cohort.assessmentParticipationRate}%`}
-          subtitle="125 of 142 completed"
+          subtitle={language === 'ta' ? '142-இல் 125 பேர் முடித்தனர்' : '125 of 142 completed'}
           icon={FileCheck2}
           iconColor="text-teal-700 bg-teal-50 border-teal-200"
           onClick={() => navigate('/admin/assessments')}
         />
 
         <StatCard
-          title="Support Recommended"
+          title={language === 'ta' ? 'பயிற்சி தேவைப்படுபவர்கள்' : 'Support Recommended'}
           value={cohort.studentsNeedingSupport}
-          subtitle="Identified gaps"
+          subtitle={language === 'ta' ? 'இடைவெளிகள் கண்டறியப்பட்டன' : 'Identified gaps'}
           icon={AlertTriangle}
           iconColor="text-amber-700 bg-amber-50 border-amber-200"
           onClick={() => navigate('/admin/interventions')}
         />
 
         <StatCard
-          title="Materials Active"
+          title={language === 'ta' ? 'செயலில் உள்ள வளங்கள்' : 'Materials Active'}
           value={materials.length}
-          subtitle="Curated by faculty"
+          subtitle={language === 'ta' ? 'பேராசிரியர்களால் ஒதுக்கப்பட்டவை' : 'Curated by faculty'}
           icon={BookOpen}
           iconColor="text-rose-700 bg-rose-50 border-rose-200"
           onClick={() => navigate('/admin/learning-materials')}
@@ -126,15 +128,17 @@ export const AdminDashboard: React.FC = () => {
             <div>
               <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-amber-600" />
-                <span>Most Prevalent Cohort Technical Gaps</span>
+                <span>{language === 'ta' ? 'திரளின் முதன்மைத் தொழில்நுட்ப இடைவெளிகள்' : 'Most Prevalent Cohort Technical Gaps'}</span>
               </h2>
-              <p className="text-xs text-slate-500">Highest priority domains needing remedial coursework</p>
+              <p className="text-xs text-slate-500">
+                {language === 'ta' ? 'தீர்வுப் பயிற்சி தேவைப்படும் முக்கியத் துறைகள்' : 'Highest priority domains needing remedial coursework'}
+              </p>
             </div>
             <button
               onClick={() => navigate('/admin/interventions')}
               className="text-xs font-semibold text-blue-700 hover:underline"
             >
-              Take Action →
+              {language === 'ta' ? 'நடவடிக்கை எடு →' : 'Take Action →'}
             </button>
           </div>
 
@@ -148,11 +152,13 @@ export const AdminDashboard: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-slate-900">{gap.skill}</span>
                     <Badge variant={gap.severity === 'High' ? 'danger' : 'warning'} size="sm">
-                      {gap.severity} Priority
+                      {language === 'ta' ? (gap.severity === 'High' ? 'உயர் முன்னுரிமை' : 'நடுத்தர முன்னுரிமை') : `${gap.severity} Priority`}
                     </Badge>
                   </div>
                   <span className="text-xs font-semibold text-slate-700">
-                    {gap.affectedCount} Students Affected (Avg {gap.avgScore}%)
+                    {language === 'ta'
+                      ? `${gap.affectedCount} மாணவர்கள் (சராசரி ${gap.avgScore}%)`
+                      : `${gap.affectedCount} Students Affected (Avg ${gap.avgScore}%)`}
                   </span>
                 </div>
 
@@ -167,13 +173,15 @@ export const AdminDashboard: React.FC = () => {
 
                 <div className="mt-2.5 flex items-center justify-between text-xs pt-1 border-t border-slate-200/50">
                   <span className="text-[11px] text-slate-500">
-                    Includes Preethi S. (52%) and 41 other students
+                    {language === 'ta'
+                      ? `ப்ரீத்தி எஸ். (52%) மற்றும் 41 பிற மாணவர்கள் உட்பட்டவர்கள்`
+                      : 'Includes Preethi S. (52%) and 41 other students'}
                   </span>
                   <button
                     onClick={() => navigate('/admin/interventions')}
                     className="text-blue-700 font-semibold hover:underline flex items-center gap-1"
                   >
-                    <span>Assign Remedial Module</span>
+                    <span>{language === 'ta' ? 'பயிற்சித் தொகுதியை ஒதுக்கு' : 'Assign Remedial Module'}</span>
                     <ArrowRight className="w-3 h-3" />
                   </button>
                 </div>
@@ -189,9 +197,11 @@ export const AdminDashboard: React.FC = () => {
               <div>
                 <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                   <Building className="w-4 h-4 text-blue-700" />
-                  <span>Department Performance</span>
+                  <span>{language === 'ta' ? 'துறை வாரியான செயல்திறன்' : 'Department Performance'}</span>
                 </h2>
-                <p className="text-xs text-slate-500">Competency & Readiness averages</p>
+                <p className="text-xs text-slate-500">
+                  {language === 'ta' ? 'திறன் மற்றும் தயார்நிலை சராசரிகள்' : 'Competency & Readiness averages'}
+                </p>
               </div>
             </div>
 
@@ -200,16 +210,22 @@ export const AdminDashboard: React.FC = () => {
                 <div key={dept.department} className="p-3.5 rounded-xl border border-slate-200 bg-slate-50">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-800">{dept.department}</span>
-                    <span className="text-[11px] text-slate-500">{dept.count} Students</span>
+                    <span className="text-[11px] text-slate-500">
+                      {language === 'ta' ? `${dept.count} மாணவர்கள்` : `${dept.count} Students`}
+                    </span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-slate-200/60 text-xs">
                     <div>
-                      <span className="text-[10px] text-slate-400 block uppercase font-medium">Avg Competency</span>
+                      <span className="text-[10px] text-slate-400 block uppercase font-medium">
+                        {language === 'ta' ? 'சராசரித் திறன்' : 'Avg Competency'}
+                      </span>
                       <span className="font-bold text-blue-900">{dept.avgScore}%</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 block uppercase font-medium">Placement Readiness</span>
+                      <span className="text-[10px] text-slate-400 block uppercase font-medium">
+                        {language === 'ta' ? 'வேலைவாய்ப்புத் தயார்நிலை' : 'Placement Readiness'}
+                      </span>
                       <span className="font-bold text-emerald-700">{dept.readiness}%</span>
                     </div>
                   </div>
@@ -219,12 +235,14 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-            <span className="text-slate-500">Benchmark window: Academic Year 2025–2026</span>
+            <span className="text-slate-500">
+              {language === 'ta' ? 'மதிப்பீட்டுக் காலம்: கல்வி ஆண்டு 2025–2026' : 'Benchmark window: Academic Year 2025–2026'}
+            </span>
             <button
               onClick={() => navigate('/admin/reports')}
               className="text-blue-700 font-semibold hover:underline"
             >
-              Detailed Cohort Analytics →
+              {language === 'ta' ? 'விரிவான திரள் பகுப்பாய்வு →' : 'Detailed Cohort Analytics →'}
             </button>
           </div>
         </div>
@@ -236,17 +254,17 @@ export const AdminDashboard: React.FC = () => {
           <div>
             <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
               <FileCheck2 className="w-4 h-4 text-blue-700" />
-              <span>Recent Diagnostic Assessment Benchmark Results</span>
+              <span>{language === 'ta' ? 'சமீபத்திய கண்டறியும் மதிப்பீட்டு முடிவுகள்' : 'Recent Diagnostic Assessment Benchmark Results'}</span>
             </h2>
             <p className="text-xs text-slate-500">
-              Live submissions mapped to student competency records
+              {language === 'ta' ? 'மாணவர் திறன் பதிவுகளுடன் இணைக்கப்பட்ட நேரலை சமர்ப்பிப்புகள்' : 'Live submissions mapped to student competency records'}
             </p>
           </div>
           <button
             onClick={() => navigate('/admin/students')}
             className="text-xs font-semibold text-blue-700 hover:underline"
           >
-            View All Students ({cohort.totalStudents}) →
+            {language === 'ta' ? `அனைத்து மாணவர்களையும் பார் (${cohort.totalStudents}) →` : `View All Students (${cohort.totalStudents}) →`}
           </button>
         </div>
 
@@ -254,13 +272,13 @@ export const AdminDashboard: React.FC = () => {
           <table className="w-full text-left text-xs">
             <thead>
               <tr className="border-b border-slate-200 text-slate-400 font-semibold uppercase text-[10px]">
-                <th className="pb-3">Student Name</th>
-                <th className="pb-3">Register No.</th>
-                <th className="pb-3">Department</th>
-                <th className="pb-3">Score Achieved</th>
-                <th className="pb-3">Key Technical Gap</th>
-                <th className="pb-3">Date</th>
-                <th className="pb-3 text-right">Intervention</th>
+                <th className="pb-3">{language === 'ta' ? 'மாணவர் பெயர்' : 'Student Name'}</th>
+                <th className="pb-3">{language === 'ta' ? 'பதிவு எண்' : 'Register No.'}</th>
+                <th className="pb-3">{language === 'ta' ? 'துறை' : 'Department'}</th>
+                <th className="pb-3">{language === 'ta' ? 'பெற்ற மதிப்பெண்' : 'Score Achieved'}</th>
+                <th className="pb-3">{language === 'ta' ? 'முதன்மைத் தொழில்நுட்ப இடைவெளி' : 'Key Technical Gap'}</th>
+                <th className="pb-3">{language === 'ta' ? 'தேதி' : 'Date'}</th>
+                <th className="pb-3 text-right">{language === 'ta' ? 'தலையீடு' : 'Intervention'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -278,7 +296,7 @@ export const AdminDashboard: React.FC = () => {
                           : 'bg-rose-50 text-rose-700 border border-rose-200'
                       }`}
                     >
-                      {item.keyGap}
+                      {language === 'ta' && item.keyGap.includes('None') ? 'எதுவுமில்லை' : item.keyGap}
                     </span>
                   </td>
                   <td className="py-3 text-slate-500">{item.date}</td>
@@ -287,7 +305,7 @@ export const AdminDashboard: React.FC = () => {
                       onClick={() => navigate('/admin/interventions')}
                       className="text-xs font-semibold text-blue-700 hover:underline"
                     >
-                      Assign Resource
+                      {language === 'ta' ? 'வளத்தை ஒதுக்கு' : 'Assign Resource'}
                     </button>
                   </td>
                 </tr>

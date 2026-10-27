@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { CompetencyScore } from '../../types';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface CompetencyDonutChartProps {
   competencies: CompetencyScore[];
@@ -29,10 +30,12 @@ export const CompetencyDonutChart: React.FC<CompetencyDonutChartProps> = ({
   height = 300,
   showCenterScore = true,
 }) => {
+  const { language, t, getCompetencyName, getLevelName } = useLanguage();
+
   if (!competencies || competencies.length === 0) {
     return (
       <div style={{ height }} className="flex items-center justify-center text-xs text-slate-400">
-        No competency distribution data available.
+        {t('common.noRecordsFound')}
       </div>
     );
   }
@@ -42,10 +45,10 @@ export const CompetencyDonutChart: React.FC<CompetencyDonutChartProps> = ({
   );
 
   const chartData = competencies.map((c) => ({
-    name: c.competency,
+    name: getCompetencyName(c.competency),
     value: c.score,
     target: c.targetScore,
-    level: c.level,
+    level: getLevelName(c.level),
   }));
 
   const CustomTooltip = ({ active, payload }: any) => {
@@ -56,15 +59,15 @@ export const CompetencyDonutChart: React.FC<CompetencyDonutChartProps> = ({
           <p className="font-bold text-slate-900 border-b border-slate-100 pb-1 mb-1.5">{data.name}</p>
           <div className="mt-1 space-y-1 text-[11px]">
             <p className="text-blue-700 font-semibold flex items-center justify-between gap-3">
-              <span>Score (மதிப்பெண்):</span>
+              <span>{language === 'ta' ? 'மதிப்பெண்:' : 'Score:'}</span>
               <span>{data.value}%</span>
             </p>
             <p className="text-slate-500 flex items-center justify-between gap-3">
-              <span>Benchmark (இலக்கு):</span>
+              <span>{language === 'ta' ? 'இலக்கு:' : 'Benchmark:'}</span>
               <span>{data.target}%</span>
             </p>
             <p className="text-slate-500 flex items-center justify-between gap-3">
-              <span>Level (நிலை):</span>
+              <span>{language === 'ta' ? 'நிலை:' : 'Level:'}</span>
               <span className="font-semibold text-slate-800">{data.level}</span>
             </p>
           </div>
@@ -111,13 +114,13 @@ export const CompetencyDonutChart: React.FC<CompetencyDonutChartProps> = ({
       {showCenterScore && (
         <div className="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
           <span className="text-[10px] font-bold text-slate-400 block uppercase tracking-wider">
-            Overall Index
+            {language === 'ta' ? 'ஒட்டுமொத்தக் குறியீடு' : 'Overall Index'}
           </span>
           <span className="text-3xl font-extrabold text-slate-900 leading-tight">
             {overallScore}%
           </span>
           <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full inline-block mt-0.5 border border-emerald-200">
-            Verified • சரிபார்க்கப்பட்டது
+            {t('common.verified')}
           </span>
         </div>
       )}

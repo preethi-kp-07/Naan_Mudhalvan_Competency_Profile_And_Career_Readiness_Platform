@@ -13,8 +13,10 @@ import {
 } from 'lucide-react';
 import { studentService } from '../../services/studentService';
 import { Badge } from '../../components/common/Badge';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 export const SkillPassportPage: React.FC = () => {
+  const { t, language } = useLanguage();
   const [passport, setPassport] = useState(studentService.getSkillPassport());
   const [copied, setCopied] = useState(false);
   const [bio, setBio] = useState(passport.customBio || '');
@@ -69,9 +71,9 @@ export const SkillPassportPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">My Shareable Skill Passport</h1>
+          <h1 className="text-2xl font-bold text-slate-900">{t('passport.pageTitle')}</h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Student-controlled verifiable profile for recruitment drives, portfolio showcases, and faculty audits
+            {t('passport.pageSubtitle')}
           </p>
         </div>
 
@@ -83,7 +85,7 @@ export const SkillPassportPage: React.FC = () => {
             className="px-3.5 py-2 text-xs font-semibold rounded-lg bg-blue-700 text-white hover:bg-blue-800 flex items-center gap-1.5 shadow-xs"
           >
             <Eye className="w-3.5 h-3.5" />
-            <span>Preview Public View</span>
+            <span>{t('passport.previewPassport')}</span>
             <ExternalLink className="w-3 h-3" />
           </a>
         </div>
@@ -102,15 +104,19 @@ export const SkillPassportPage: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-sm font-bold text-slate-900">Public Link Sharing</h2>
+                <h2 className="text-sm font-bold text-slate-900">{t('passport.publicStatus')}</h2>
                 <Badge variant={passport.isPublic ? 'success' : 'neutral'} size="sm">
-                  {passport.isPublic ? 'Publicly Accessible' : 'Private (Link Disabled)'}
+                  {passport.isPublic ? t('passport.isPublicTrue') : t('passport.isPublicFalse')}
                 </Badge>
               </div>
               <p className="text-xs text-slate-500">
                 {passport.isPublic
-                  ? 'Recruiters and external mentors with this URL can view your selected achievements.'
-                  : 'Public access is revoked. Anyone visiting the link will see a private notice.'}
+                  ? (language === 'ta'
+                      ? 'இந்த URL உள்ள தேர்வாளர்கள் மற்றும் வழிகாட்டிகள் உங்கள் சாதனைகளைப் பார்க்கலாம்.'
+                      : 'Recruiters and external mentors with this URL can view your selected achievements.')
+                  : (language === 'ta'
+                      ? 'பொது அணுகல் முடக்கப்பட்டுள்ளது. இந்த இணைப்பைப் பார்ப்பவர்களுக்குத் தனிப்பட்ட அறிவிப்பு தோன்றும்.'
+                      : 'Public access is revoked. Anyone visiting the link will see a private notice.')}
               </p>
             </div>
           </div>
@@ -123,7 +129,9 @@ export const SkillPassportPage: React.FC = () => {
                 : 'bg-emerald-600 text-white hover:bg-emerald-700'
             }`}
           >
-            {passport.isPublic ? 'Revoke Public Access' : 'Enable Public Link'}
+            {passport.isPublic
+              ? (language === 'ta' ? 'பொது அணுகலை முடக்கு' : 'Revoke Public Access')
+              : (language === 'ta' ? 'பொது இணைப்பை இயக்கு' : 'Enable Public Link')}
           </button>
         </div>
 
@@ -131,7 +139,7 @@ export const SkillPassportPage: React.FC = () => {
         <div className="mt-6 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
           <div className="md:col-span-8 space-y-3">
             <label className="text-xs font-semibold text-slate-700 block">
-              Permanent Verified Share URL
+              {language === 'ta' ? 'நிரந்தர சரிபார்க்கப்பட்ட பகிர்வு URL' : 'Permanent Verified Share URL'}
             </label>
             <div className="flex items-center gap-2">
               <input
@@ -145,14 +153,17 @@ export const SkillPassportPage: React.FC = () => {
                 className="px-3.5 py-2 text-xs font-semibold rounded-lg bg-blue-700 text-white hover:bg-blue-800 transition-colors flex items-center gap-1.5 shrink-0"
               >
                 {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copied ? 'Copied!' : 'Copy Link'}</span>
+                <span>{copied ? t('passport.copied') : t('passport.copyLink')}</span>
               </button>
             </div>
 
             <div className="bg-slate-50 border border-slate-200 p-3 rounded-xl text-[11px] text-slate-500 flex items-start gap-2">
               <ShieldCheck className="w-4 h-4 text-blue-700 shrink-0 mt-0.5" />
               <span>
-                <strong>Privacy Guaranteed:</strong> Your private contact numbers, passwords, and detailed personal notes will <em>never</em> be disclosed on the public link. Only candidate-checked sections below are shown.
+                <strong>{language === 'ta' ? 'தனியுரிமை உறுதி:' : 'Privacy Guaranteed:'}</strong>{' '}
+                {language === 'ta'
+                  ? 'உங்கள் தனிப்பட்ட தொடர்பு எண்கள், கடவுச்சொல் மற்றும் விரிவான தனிப்பட்ட குறிப்புகள் பொது இணைப்பில் ஒருபோதும் தெரியாது. கீழே நீங்கள் சரிபார்த்த பிரிவுகள் மட்டுமே பொதுப் பார்வையில் தெரியும்.'
+                  : 'Your private contact numbers, passwords, and detailed personal notes will never be disclosed on the public link. Only candidate-checked sections below are shown.'}
               </span>
             </div>
           </div>
@@ -161,7 +172,6 @@ export const SkillPassportPage: React.FC = () => {
           <div className="md:col-span-4 flex flex-col items-center justify-center p-4 bg-slate-50 rounded-xl border border-slate-200">
             <div className="p-3 bg-white rounded-lg shadow-2xs border border-slate-200">
               <svg className="w-28 h-28 text-slate-900" viewBox="0 0 100 100" fill="currentColor">
-                {/* Clean geometric QR code simulation */}
                 <rect x="0" y="0" width="30" height="30" rx="4" />
                 <rect x="5" y="5" width="20" height="20" fill="white" rx="2" />
                 <rect x="10" y="10" width="10" height="10" />
@@ -188,7 +198,7 @@ export const SkillPassportPage: React.FC = () => {
               </svg>
             </div>
             <span className="text-[10px] text-slate-500 font-medium mt-2">
-              Scan with mobile camera to view passport
+              {language === 'ta' ? 'மொபைல் கேமரா மூலம் QR ஸ்கேன் செய்து பார்க்கவும்' : 'Scan with mobile camera to view passport'}
             </span>
           </div>
         </div>
@@ -198,21 +208,51 @@ export const SkillPassportPage: React.FC = () => {
       <div className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-2xs space-y-4">
         <h2 className="text-sm font-bold text-slate-900 pb-2 border-b border-slate-100 flex items-center gap-2">
           <Sliders className="w-4 h-4 text-blue-700" />
-          <span>Granular Section Visibility Controls</span>
+          <span>{t('passport.sectionToggles')}</span>
         </h2>
         <p className="text-xs text-slate-500">
-          Check which credentials you want visible on your public Skill Passport:
+          {language === 'ta'
+            ? 'உங்கள் பொது திறன் பாஸ்போர்ட்டில் எவை தெரிய வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும்:'
+            : 'Check which credentials you want visible on your public Skill Passport:'}
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           {[
-            { key: 'personalInfo', label: 'Candidate Name & Headline', desc: 'Displays full name and program' },
-            { key: 'academicDetails', label: 'Academic Institution & Year', desc: 'Institution name and semester' },
-            { key: 'competencyScores', label: 'Assessment Competency Vector', desc: 'Validated diagnostic scores' },
-            { key: 'naanMudhalvanRecords', label: 'Naan Mudhalvan Training Courses', desc: 'Completed courses and certificates' },
-            { key: 'skills', label: 'Technical & Analytical Skills', desc: 'Skill tags with proficiency levels' },
-            { key: 'certifications', label: 'Industry Certifications', desc: 'Verified certificate credentials' },
-            { key: 'projects', label: 'Featured Software Projects', desc: 'GitHub links and project summaries' },
+            {
+              key: 'personalInfo',
+              label: language === 'ta' ? 'மாணவர் பெயர் & கல்வி விவரம்' : 'Candidate Name & Headline',
+              desc: language === 'ta' ? 'முழுப் பெயர் மற்றும் பட்டப்படிப்பைக் காட்டும்' : 'Displays full name and program',
+            },
+            {
+              key: 'academicDetails',
+              label: language === 'ta' ? 'கல்லூரி & கல்வி ஆண்டு' : 'Academic Institution & Year',
+              desc: language === 'ta' ? 'கல்லூரி பெயர் மற்றும் செமஸ்டர்' : 'Institution name and semester',
+            },
+            {
+              key: 'competencyScores',
+              label: language === 'ta' ? 'மதிப்பீட்டுத் திறன் திசையன்' : 'Assessment Competency Vector',
+              desc: language === 'ta' ? 'சரிபார்க்கப்பட்ட கண்டறியும் மதிப்பெண்கள்' : 'Validated diagnostic scores',
+            },
+            {
+              key: 'naanMudhalvanRecords',
+              label: language === 'ta' ? 'நான் முதல்வன் பயிற்சிகள்' : 'Naan Mudhalvan Training Courses',
+              desc: language === 'ta' ? 'முடிக்கப்பட்ட பாடங்கள் மற்றும் சான்றிதழ்கள்' : 'Completed courses and certificates',
+            },
+            {
+              key: 'skills',
+              label: language === 'ta' ? 'தொழில்நுட்பத் திறன்கள்' : 'Technical & Analytical Skills',
+              desc: language === 'ta' ? 'திறன் குறிச்சொற்கள் மற்றும் நிலைகள்' : 'Skill tags with proficiency levels',
+            },
+            {
+              key: 'certifications',
+              label: language === 'ta' ? 'தொழில் சான்றிதழ்கள்' : 'Industry Certifications',
+              desc: language === 'ta' ? 'சரிபார்க்கப்பட்ட சான்றிதழ் விவரங்கள்' : 'Verified certificate credentials',
+            },
+            {
+              key: 'projects',
+              label: language === 'ta' ? 'மென்பொருள் திட்டங்கள்' : 'Featured Software Projects',
+              desc: language === 'ta' ? 'GitHub இணைப்புகள் மற்றும் திட்டச் சுருக்கங்கள்' : 'GitHub links and project summaries',
+            },
           ].map(({ key, label, desc }) => {
             const isChecked = passport.visibleSections[key as keyof typeof passport.visibleSections];
 
@@ -242,7 +282,7 @@ export const SkillPassportPage: React.FC = () => {
       {/* Custom Bio Form */}
       <div className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-2xs">
         <h2 className="text-sm font-bold text-slate-900 pb-2 border-b border-slate-100 mb-3">
-          Candidate Statement / Summary Bio
+          {language === 'ta' ? 'மாணவர் அறிக்கை / சுயவிவரச் சுருக்கம்' : 'Candidate Statement / Summary Bio'}
         </h2>
 
         <form onSubmit={handleSaveBio} className="space-y-3">
@@ -250,7 +290,11 @@ export const SkillPassportPage: React.FC = () => {
             rows={3}
             value={bio}
             onChange={(e) => setBio(e.target.value)}
-            placeholder="Introduce your career focus, technical interests, and academic background..."
+            placeholder={
+              language === 'ta'
+                ? 'உங்கள் தொழில் இலக்கு, தொழில்நுட்ப ஆர்வங்கள் மற்றும் கல்விப் பின்னணியை விவரிக்கவும்...'
+                : 'Introduce your career focus, technical interests, and academic background...'
+            }
             className="w-full p-3 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:outline-none"
           />
 
@@ -258,7 +302,7 @@ export const SkillPassportPage: React.FC = () => {
             {savedFeedback && (
               <span className="text-xs text-emerald-700 font-semibold flex items-center gap-1">
                 <Check className="w-3.5 h-3.5" />
-                <span>Bio updated successfully!</span>
+                <span>{language === 'ta' ? 'சுயவிவர அறிக்கை புதுப்பிக்கப்பட்டது!' : 'Bio updated successfully!'}</span>
               </span>
             )}
             <div className="ml-auto">
@@ -266,7 +310,7 @@ export const SkillPassportPage: React.FC = () => {
                 type="submit"
                 className="px-4 py-2 text-xs font-semibold rounded-lg bg-blue-700 text-white hover:bg-blue-800 transition-colors"
               >
-                Save Bio
+                {language === 'ta' ? 'அறிக்கையைச் சேமி' : 'Save Bio'}
               </button>
             </div>
           </div>

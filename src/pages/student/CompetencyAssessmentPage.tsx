@@ -7,24 +7,24 @@ import {
   ArrowRight,
   ArrowLeft,
   Award,
-  Sparkles,
-  HelpCircle,
   RotateCcw,
   Eye,
   Check,
-  ShieldCheck,
   Zap,
 } from 'lucide-react';
 import { assessmentService } from '../../services/assessmentService';
 import { AssessmentQuestion, AssessmentAttempt } from '../../types';
 import { Badge } from '../../components/common/Badge';
 import { Modal } from '../../components/common/Modal';
+import { useLanguage } from '../../i18n/LanguageContext';
+import { getLocalizedQuestion } from '../../i18n/dataTranslations';
 
 const IN_PROGRESS_KEY = 'nm_assessment_in_progress_answers';
 
 export const CompetencyAssessmentPage: React.FC = () => {
   const navigate = useNavigate();
-  const allQuestions = assessmentService.getQuestions();
+  const { language, t, getCompetencyName, getLevelName, getDifficultyName } = useLanguage();
+  const rawQuestions = assessmentService.getQuestions();
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, number>>(() => {
@@ -47,15 +47,17 @@ export const CompetencyAssessmentPage: React.FC = () => {
     }
   }, [selectedAnswers, isSubmitted]);
 
-  const currentQ: AssessmentQuestion = allQuestions[currentIndex] || allQuestions[0];
-  const totalQuestions = allQuestions.length;
+  // Localize active question dynamically
+  const currentRaw = rawQuestions[currentIndex] || rawQuestions[0];
+  const currentQ: AssessmentQuestion = getLocalizedQuestion(currentRaw, language);
+  const totalQuestions = rawQuestions.length;
   const answeredCount = Object.keys(selectedAnswers).length;
 
   const handleSelectOption = (optionIndex: number) => {
     if (isSubmitting || isSubmitted) return;
     setSelectedAnswers((prev) => ({
       ...prev,
-      [currentQ.id]: optionIndex,
+      [currentRaw.id]: optionIndex,
     }));
   };
 
@@ -110,26 +112,26 @@ export const CompetencyAssessmentPage: React.FC = () => {
           </div>
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-semibold uppercase tracking-wider mb-2">
             <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>தேர்வு வெற்றிகரமாக முடிந்தது • Evaluation Complete</span>
+            <span>{t('assessment.resultBannerTag')}</span>
           </span>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
-            Competency Benchmark Result
+            {t('assessment.resultTitle')}
           </h1>
           <p className="text-xs sm:text-sm text-blue-100/90 mt-2 max-w-lg mx-auto leading-relaxed">
-            அனைத்து 20 கேள்விகளும் மதிப்பீடு செய்யப்பட்டன. உங்கள் திறன் மதிப்பீடு மற்றும் தொழில் சார்ந்த கற்றல் வழிகாட்டி உடனடியாக புதுப்பிக்கப்பட்டுள்ளது.
+            {t('assessment.resultSubtitle')}
           </p>
 
           <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-6 bg-white/10 backdrop-blur-md px-8 py-4 rounded-2xl border border-white/20 shadow-sm">
             <div className="text-left">
               <span className="text-[10px] text-blue-200 block uppercase font-bold tracking-wider">
-                Overall Score (மொத்த மதிப்பெண்)
+                {t('common.overallScore')}
               </span>
               <span className="text-3xl sm:text-4xl font-black text-white">{assessmentResult.overallScore}%</span>
             </div>
             <div className="h-10 w-px bg-white/20 hidden sm:block" />
             <div className="text-left">
               <span className="text-[10px] text-blue-200 block uppercase font-bold tracking-wider">
-                Accuracy (சரியான விடைகள்)
+                {t('common.accuracy')}
               </span>
               <span className="text-2xl sm:text-3xl font-extrabold text-emerald-300">
                 {assessmentResult.correctAnswers} / {assessmentResult.totalQuestions}
@@ -143,12 +145,12 @@ export const CompetencyAssessmentPage: React.FC = () => {
           <div className="flex items-center justify-between pb-3 mb-5 border-b border-slate-100">
             <div>
               <h2 className="text-base font-bold text-slate-900">
-                Competency-Wise Diagnostic Scores
+                {t('assessment.breakdownTitle')}
               </h2>
-              <p className="text-xs text-slate-500">திறன் வாரியான விரிவான மதிப்பெண் பட்டியல்</p>
+              <p className="text-xs text-slate-500">{t('assessment.breakdownSubtitle')}</p>
             </div>
             <span className="text-xs font-semibold px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg">
-              Target Standard: 75%
+              {t('assessment.targetStandard')}
             </span>
           </div>
 
@@ -163,19 +165,25 @@ export const CompetencyAssessmentPage: React.FC = () => {
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div>
-                      <span className="text-xs sm:text-sm font-bold text-slate-900">{comp}</span>
+                      <span className="text-xs sm:text-sm font-bold text-slate-900">
+                        {getCompetencyName(comp)}
+                      </span>
                       <p className="text-[11px] text-slate-500">
                         {isProficient
-                          ? 'Excellent mastery! தகுதியான தேர்ச்சி'
+                          ? (language === 'ta' ? 'சிறந்த தேர்ச்சி நிலை' : 'Excellent mastery! Meets all requirements')
                           : isDeveloping
-                          ? 'Good understanding, needs slight practice. மிதமான நிலை'
-                          : 'Priority skill gap. அதிக பயிற்சி தேவை'}
+                          ? (language === 'ta' ? 'மிதமான நிலை, கூடுதல் பயிற்சி தேவை' : 'Good understanding, needs slight practice')
+                          : (language === 'ta' ? 'முன்னுரிமை திறன் இடைவெளி, தீவிர பயிற்சி தேவை' : 'Priority skill gap, remedial attention needed')}
                       </p>
                     </div>
                     <div className="flex items-center gap-2.5">
                       <span className="text-sm font-extrabold text-slate-900">{score}%</span>
                       <Badge variant={isProficient ? 'success' : isDeveloping ? 'info' : 'danger'} size="sm">
-                        {isProficient ? 'Proficient' : isDeveloping ? 'Developing' : 'Needs Practice'}
+                        {isProficient
+                          ? getLevelName('Proficient')
+                          : isDeveloping
+                          ? getLevelName('Developing')
+                          : (language === 'ta' ? 'பயிற்சி தேவை' : 'Needs Practice')}
                       </Badge>
                     </div>
                   </div>
@@ -198,7 +206,7 @@ export const CompetencyAssessmentPage: React.FC = () => {
               className="px-4 py-2.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl flex items-center gap-2 transition-colors"
             >
               <RotateCcw className="w-4 h-4 text-slate-500" />
-              <span>Retake Benchmark • மீண்டும் எழுதவும்</span>
+              <span>{t('assessment.retakeBenchmark')}</span>
             </button>
 
             <div className="flex items-center gap-2.5">
@@ -206,13 +214,13 @@ export const CompetencyAssessmentPage: React.FC = () => {
                 onClick={() => navigate('/student/competency-profile')}
                 className="px-4 py-2.5 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 hover:bg-blue-100 rounded-xl transition-colors"
               >
-                Competency Profile
+                {t('assessment.goToProfile')}
               </button>
               <button
                 onClick={() => navigate('/student/skill-gaps')}
                 className="px-5 py-2.5 text-xs font-bold text-white bg-blue-700 hover:bg-blue-800 rounded-xl flex items-center gap-2 shadow-sm transition-all hover:shadow-md"
               >
-                <span>Check Updated Skill Gaps</span>
+                <span>{t('assessment.checkSkillGaps')}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -230,15 +238,15 @@ export const CompetencyAssessmentPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
-                Competency Benchmark Assessment
+                {t('assessment.pageTitle')}
               </h1>
               <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Auto-saved</span>
+                <span>{t('assessment.autoSaved')}</span>
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-0.5">
-              20 கேள்விகள் கொண்ட திறன் ஆய்வு மதிப்பீடு • 20 Career Readiness Evaluation
+              {t('assessment.pageSubtitle')}
             </p>
           </div>
 
@@ -249,22 +257,22 @@ export const CompetencyAssessmentPage: React.FC = () => {
               title="Review answer status"
             >
               <Eye className="w-3.5 h-3.5 text-slate-500" />
-              <span>Review ({answeredCount}/20)</span>
+              <span>{t('assessment.reviewStatus', 'Review ({answered}/{total})', { answered: answeredCount, total: totalQuestions })}</span>
             </button>
             <span className="text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-xl">
-              Q {currentIndex + 1} of {totalQuestions}
+              {language === 'ta' ? `கேள்வி ${currentIndex + 1} / ${totalQuestions}` : `Q ${currentIndex + 1} of ${totalQuestions}`}
             </span>
           </div>
         </div>
 
-        {/* Friendly guidance for college & school students */}
+        {/* Friendly guidance for college students */}
         <div className="flex items-center justify-between text-xs text-slate-500 bg-slate-50 px-3.5 py-2 rounded-xl border border-slate-200/60">
           <span className="flex items-center gap-1.5 text-[11px] text-slate-600 font-medium">
             <Zap className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-            <span>எதிர்மறை மதிப்பெண்கள் இல்லை (No negative marks). அமைதியாக யோசித்து விடையளிக்கவும்.</span>
+            <span>{t('assessment.noNegativeMarks')}</span>
           </span>
           <span className="font-bold text-blue-700 text-xs shrink-0">
-            {Math.round((answeredCount / totalQuestions) * 100)}% Complete
+            {Math.round((answeredCount / totalQuestions) * 100)}% {language === 'ta' ? 'முடிந்தது' : 'Complete'}
           </span>
         </div>
 
@@ -276,13 +284,13 @@ export const CompetencyAssessmentPage: React.FC = () => {
           />
         </div>
 
-        {/* Quick Question Jump Ribbon (1 to 20 buttons for easy access) */}
+        {/* Quick Question Jump Ribbon */}
         <div className="pt-2">
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
-            விரைவு வழிசெலுத்தல் • Question Navigator
+            {t('assessment.questionNavigator')}
           </span>
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-            {allQuestions.map((q, idx) => {
+            {rawQuestions.map((q, idx) => {
               const isAnswered = selectedAnswers[q.id] !== undefined;
               const isCurrent = idx === currentIndex;
               return (
@@ -311,18 +319,18 @@ export const CompetencyAssessmentPage: React.FC = () => {
         <div className="flex items-center justify-between">
           <Badge variant="primary" size="sm">{currentQ.competency}</Badge>
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] text-slate-400 font-medium">Difficulty Level:</span>
+            <span className="text-[11px] text-slate-400 font-medium">{t('assessment.difficultyLevel')}</span>
             <Badge
               variant={
-                currentQ.difficulty === 'Hard'
+                currentRaw.difficulty === 'Hard'
                   ? 'danger'
-                  : currentQ.difficulty === 'Medium'
+                  : currentRaw.difficulty === 'Medium'
                   ? 'warning'
                   : 'success'
               }
               size="sm"
             >
-              {currentQ.difficulty}
+              {getDifficultyName(currentRaw.difficulty)}
             </Badge>
           </div>
         </div>
@@ -330,17 +338,17 @@ export const CompetencyAssessmentPage: React.FC = () => {
         {/* Question Text */}
         <div className="space-y-1.5">
           <span className="text-[11px] text-blue-600 font-bold uppercase tracking-wider block">
-            கேள்வி எண் / Question #{currentIndex + 1}
+            {t('assessment.questionNumber', 'Question #{number}', { number: currentIndex + 1 })}
           </span>
           <p className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed">
             {currentQ.questionText}
           </p>
         </div>
 
-        {/* Options List with Big Click-Friendly Cards */}
+        {/* Options List with Click-Friendly Cards */}
         <div className="space-y-3">
           {currentQ.options.map((option, optIdx) => {
-            const isSelectedOption = selectedAnswers[currentQ.id] === optIdx;
+            const isSelectedOption = selectedAnswers[currentRaw.id] === optIdx;
             const optionLetter = String.fromCharCode(65 + optIdx);
 
             return (
@@ -384,7 +392,7 @@ export const CompetencyAssessmentPage: React.FC = () => {
             className="px-4 py-2.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 rounded-xl flex items-center gap-1.5 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>முந்தையது • Previous</span>
+            <span>{t('assessment.prevQuestion')}</span>
           </button>
 
           <div className="flex items-center gap-2.5">
@@ -392,7 +400,7 @@ export const CompetencyAssessmentPage: React.FC = () => {
               onClick={() => setIsReviewModalOpen(true)}
               className="hidden sm:inline-flex px-3.5 py-2.5 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
             >
-              Review Status
+              {t('common.review')}
             </button>
 
             {currentIndex < totalQuestions - 1 ? (
@@ -400,7 +408,7 @@ export const CompetencyAssessmentPage: React.FC = () => {
                 onClick={handleNext}
                 className="px-5 py-2.5 text-xs font-bold rounded-xl bg-blue-700 text-white hover:bg-blue-800 transition-all flex items-center gap-2 shadow-sm hover:shadow-md"
               >
-                <span>அடுத்தது • Next Question</span>
+                <span>{t('assessment.nextQuestion')}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             ) : (
@@ -410,7 +418,7 @@ export const CompetencyAssessmentPage: React.FC = () => {
                 className="px-6 py-2.5 text-xs font-extrabold rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 transition-all shadow-sm hover:shadow-md flex items-center gap-2 disabled:opacity-50"
               >
                 <CheckCircle2 className="w-4 h-4" />
-                <span>சரிபார்த்து சமர்ப்பிக்கவும் • Submit</span>
+                <span>{t('assessment.submitAssessment')}</span>
               </button>
             )}
           </div>
@@ -421,15 +429,15 @@ export const CompetencyAssessmentPage: React.FC = () => {
       <Modal
         isOpen={isReviewModalOpen}
         onClose={() => setIsReviewModalOpen(false)}
-        title="Review Assessment Answers • விடைகளை சரிபார்க்கவும்"
+        title={t('assessment.reviewTitle')}
       >
         <div className="space-y-4 text-xs">
           <p className="text-slate-600 leading-relaxed">
-            அனைத்து 20 கேள்விகளுக்கும் பதிலளித்துள்ளீர்களா என சரிபார்க்கவும். ஏதேனும் கேள்வியை மாற்ற விரும்பினால் அதன் எண்ணைக் கிளிக் செய்யவும்.
+            {t('assessment.reviewPrompt')}
           </p>
 
           <div className="grid grid-cols-4 sm:grid-cols-5 gap-2.5 max-h-60 overflow-y-auto p-1">
-            {allQuestions.map((q, idx) => {
+            {rawQuestions.map((q, idx) => {
               const isAnswered = selectedAnswers[q.id] !== undefined;
               const isCurrent = idx === currentIndex;
               return (
@@ -446,7 +454,9 @@ export const CompetencyAssessmentPage: React.FC = () => {
                 >
                   <span className="block text-xs font-bold">Q{idx + 1}</span>
                   <span className="text-[10px] block mt-0.5 font-medium">
-                    {isAnswered ? '✓ விடயளிக்கப்பட்டது' : 'விடையளிக்கவில்லை'}
+                    {isAnswered
+                      ? (language === 'ta' ? '✓ விடையளிக்கப்பட்டது' : '✓ Answered')
+                      : (language === 'ta' ? 'விடையளிக்கவில்லை' : 'Unanswered')}
                   </span>
                 </button>
               );
@@ -455,17 +465,17 @@ export const CompetencyAssessmentPage: React.FC = () => {
 
           <div className="flex items-center justify-between p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
             <span className="text-slate-700 font-semibold">
-              Answered: <strong>{answeredCount} of {totalQuestions}</strong>
+              {t('assessment.answeredStatus', '{answered} of {total} Answered', { answered: answeredCount, total: totalQuestions })}
             </span>
             {answeredCount < totalQuestions ? (
               <span className="text-amber-700 font-bold flex items-center gap-1">
                 <AlertCircle className="w-3.5 h-3.5" />
-                {totalQuestions - answeredCount} மீதமுள்ளன
+                {t('assessment.remainingCount', '{count} unanswered questions remaining', { count: totalQuestions - answeredCount })}
               </span>
             ) : (
               <span className="text-emerald-700 font-bold flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                அனைத்தும் முடிக்கப்பட்டன!
+                {t('assessment.allAnswered')}
               </span>
             )}
           </div>
@@ -475,7 +485,7 @@ export const CompetencyAssessmentPage: React.FC = () => {
               onClick={() => setIsReviewModalOpen(false)}
               className="px-4 py-2.5 border border-slate-300 rounded-xl hover:bg-slate-50 font-semibold text-slate-700"
             >
-              தொடர்ந்து எழுதவும் • Back
+              {t('assessment.continueExam')}
             </button>
             <button
               onClick={handleConfirmSubmit}
@@ -483,7 +493,7 @@ export const CompetencyAssessmentPage: React.FC = () => {
               className="px-5 py-2.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 font-bold shadow-sm disabled:opacity-50 flex items-center gap-2 transition-all hover:shadow-md"
             >
               <Check className="w-4 h-4" />
-              <span>{isSubmitting ? 'மதிப்பிடப்படுகிறது...' : 'சமர்ப்பிக்கவும் • Final Submit'}</span>
+              <span>{isSubmitting ? t('common.submitting') : t('assessment.confirmSubmit')}</span>
             </button>
           </div>
         </div>
