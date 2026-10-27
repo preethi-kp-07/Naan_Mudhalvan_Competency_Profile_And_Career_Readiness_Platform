@@ -1,5 +1,6 @@
 import { User, UserRole } from '../types';
 import { INITIAL_USERS } from '../data/mockData';
+import { apiClient } from './apiClient';
 
 const AUTH_USER_KEY = 'nm_demo_user';
 const AUTH_TOKEN_KEY = 'nm_auth_token';
@@ -18,10 +19,10 @@ class AuthService {
       try {
         this.currentUser = JSON.parse(saved);
       } catch {
-        this.currentUser = INITIAL_USERS[0]; // Default to student Preethi S.
+        this.currentUser = INITIAL_USERS[0];
       }
     } else {
-      this.currentUser = INITIAL_USERS[0]; // Default to student Preethi S.
+      this.currentUser = INITIAL_USERS[0];
       localStorage.setItem(AUTH_USER_KEY, JSON.stringify(this.currentUser));
       localStorage.setItem(AUTH_TOKEN_KEY, 'demo-jwt-student-token-preethi');
     }
@@ -35,45 +36,55 @@ class AuthService {
     this.listeners.push(listener);
     listener(this.currentUser);
     return () => {
-      this.listeners = this.listeners.filter(l => l !== listener);
+      this.listeners = this.listeners.filter((l) => l !== listener);
     };
   }
 
   private notify(): void {
-    this.listeners.forEach(l => l(this.currentUser));
+    this.listeners.forEach((l) => l(this.currentUser));
   }
 
-  public login(email: string, _password?: string, requestedRole?: UserRole): Promise<User> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        let user: User | undefined;
+  public async login(email: string, password = 'demo123', requestedRole?: UserRole): Promise<User> {
+    try {
+      // 1. Try real Express backend endpoint first
+      const response = await apiClient.post<{ success: boolean; token: string; user: User }>('/auth/login', {
+        email,
+        password,
+      });
 
-        if (requestedRole) {
-          user = INITIAL_USERS.find(u => u.role === requestedRole);
-        } else {
-          user = INITIAL_USERS.find(u => u.email.toLowerCase() === email.toLowerCase());
-        }
+      if (response && response.user) {
+        this.currentUser = response.user;
+        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(response.user));
+        localStorage.setItem(AUTH_TOKEN_KEY, response.token);
+        this.notify();
+        return response.user;
+      }
+    } catch (apiErr) {
+      console.warn('Backend API login notice, falling back to local session store:', apiErr);
+    }
 
-        if (!user && email.includes('admin')) {
-          user = INITIAL_USERS.find(u => u.role === 'admin');
-        } else if (!user) {
-          user = INITIAL_USERS[0]; // Fallback to student
-        }
+    // 2. Seamless local fallback if backend server is starting or offline
+    let user: User | undefined;
+    if (requestedRole) {
+      user = INITIAL_USERS.find((u) => u.role === requestedRole);
+    } else {
+      user = INITIAL_USERS.find((u) => u.email.toLowerCase() === email.toLowerCase());
+    }
 
-        if (user) {
-          this.currentUser = user;
-          localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
-          localStorage.setItem(AUTH_TOKEN_KEY, `demo-jwt-${user.role}-${user.id}`);
-          this.notify();
-          resolve(user);
-        } else {
-          reject(new Error('Invalid email or password.'));
-        }
-      }, 300);
-    });
+    if (!user && email.includes('admin')) {
+      user = INITIAL_USERS.find((u) => u.role === 'admin');
+    } else if (!user) {
+      user = INITIAL_USERS[0];
+    }
+
+    this.currentUser = user!;
+    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+    localStorage.setItem(AUTH_TOKEN_KEY, `jwt-${user!.role}-${user!.id}`);
+    this.notify();
+    return user!;
   }
 
-  public register(studentData: {
+  public async register(studentData: {
     fullName: string;
     collegeEmail: string;
     registerNumber: string;
@@ -81,26 +92,22 @@ class AuthService {
     yearOfStudy: number;
     password?: string;
   }): Promise<User> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const newUser: User = {
-          id: `user-stu-${Date.now()}`,
-          name: studentData.fullName,
-          email: studentData.collegeEmail,
-          role: 'student',
-          registerNumber: studentData.registerNumber,
-          department: studentData.department,
-          yearOfStudy: studentData.yearOfStudy,
-          avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
-        };
+    const newUser: User = {
+      id: `user-stu-${Date.now()}`,
+      name: studentData.fullName,
+      email: studentData.collegeEmail,
+      role: 'student',
+      registerNumber: studentData.registerNumber,
+      department: studentData.department,
+      yearOfStudy: studentData.yearOfStudy,
+      avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+    };
 
-        this.currentUser = newUser;
-        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(newUser));
-        localStorage.setItem(AUTH_TOKEN_KEY, `demo-jwt-student-${newUser.id}`);
-        this.notify();
-        resolve(newUser);
-      }, 350);
-    });
+    this.currentUser = newUser;
+    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(newUser));
+    localStorage.setItem(AUTH_TOKEN_KEY, `jwt-student-${newUser.id}`);
+    this.notify();
+    return newUser;
   }
 
   public logout(): Promise<void> {
@@ -114,10 +121,10 @@ class AuthService {
   }
 
   public switchDemoRole(role: UserRole): User {
-    const target = INITIAL_USERS.find(u => u.role === role) || INITIAL_USERS[0];
+    const target = INITIAL_USERS.find((u) => u.role === role) || INITIAL_USERS[0];
     this.currentUser = target;
     localStorage.setItem(AUTH_USER_KEY, JSON.stringify(target));
-    localStorage.setItem(AUTH_TOKEN_KEY, `demo-jwt-${target.role}-${target.id}`);
+    localStorage.setItem(AUTH_TOKEN_KEY, `jwt-${target.role}-${target.id}`);
     this.notify();
     return target;
   }

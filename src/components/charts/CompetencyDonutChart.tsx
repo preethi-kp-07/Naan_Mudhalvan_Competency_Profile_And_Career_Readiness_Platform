@@ -15,8 +15,6 @@ interface CompetencyDonutChartProps {
   showCenterScore?: boolean;
 }
 
-// Coordinated color palette aligned with the Tamil Nadu educational theme:
-// Deep Navy, Professional Blue, Indigo, Teal, Emerald, Amber
 const THEME_COLORS = [
   '#1D4ED8', // Professional Blue (Programming)
   '#0B2545', // Deep Navy (Relational DB / SQL)
@@ -54,17 +52,20 @@ export const CompetencyDonutChart: React.FC<CompetencyDonutChartProps> = ({
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-white p-3 rounded-xl shadow-lg border border-slate-200 text-xs">
-          <p className="font-bold text-slate-900">{data.name}</p>
-          <div className="mt-1 space-y-0.5 text-[11px]">
-            <p className="text-blue-700 font-semibold">
-              Current Score: <span>{data.value}%</span>
+        <div className="bg-white/95 backdrop-blur-md p-3.5 rounded-xl shadow-xl border border-slate-200 text-xs">
+          <p className="font-bold text-slate-900 border-b border-slate-100 pb-1 mb-1.5">{data.name}</p>
+          <div className="mt-1 space-y-1 text-[11px]">
+            <p className="text-blue-700 font-semibold flex items-center justify-between gap-3">
+              <span>Score (மதிப்பெண்):</span>
+              <span>{data.value}%</span>
             </p>
-            <p className="text-slate-500">
-              Benchmark Target: <span>{data.target}%</span>
+            <p className="text-slate-500 flex items-center justify-between gap-3">
+              <span>Benchmark (இலக்கு):</span>
+              <span>{data.target}%</span>
             </p>
-            <p className="text-slate-500">
-              Proficiency: <span className="font-medium text-slate-800">{data.level}</span>
+            <p className="text-slate-500 flex items-center justify-between gap-3">
+              <span>Level (நிலை):</span>
+              <span className="font-semibold text-slate-800">{data.level}</span>
             </p>
           </div>
         </div>
@@ -81,8 +82,8 @@ export const CompetencyDonutChart: React.FC<CompetencyDonutChartProps> = ({
             data={chartData}
             cx="50%"
             cy="50%"
-            innerRadius="55%"
-            outerRadius="80%"
+            innerRadius="58%"
+            outerRadius="82%"
             paddingAngle={3}
             dataKey="value"
             stroke="#FFFFFF"
@@ -92,7 +93,7 @@ export const CompetencyDonutChart: React.FC<CompetencyDonutChartProps> = ({
               <Cell
                 key={`cell-${index}`}
                 fill={THEME_COLORS[index % THEME_COLORS.length]}
-                className="transition-all duration-200 hover:opacity-80"
+                className="transition-all duration-200 hover:opacity-85 cursor-pointer"
               />
             ))}
           </Pie>
@@ -101,7 +102,7 @@ export const CompetencyDonutChart: React.FC<CompetencyDonutChartProps> = ({
             verticalAlign="bottom"
             align="center"
             iconType="circle"
-            wrapperStyle={{ paddingTop: '10px', fontSize: '11px', color: '#475569' }}
+            wrapperStyle={{ paddingTop: '12px', fontSize: '11px', color: '#475569', fontWeight: 500 }}
           />
         </PieChart>
       </ResponsiveContainer>
@@ -109,14 +110,14 @@ export const CompetencyDonutChart: React.FC<CompetencyDonutChartProps> = ({
       {/* Center Label for Overall Competency Index */}
       {showCenterScore && (
         <div className="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
-          <span className="text-[10px] font-semibold text-slate-400 block uppercase tracking-wider">
+          <span className="text-[10px] font-bold text-slate-400 block uppercase tracking-wider">
             Overall Index
           </span>
-          <span className="text-2xl font-black text-slate-900 leading-none">
+          <span className="text-3xl font-extrabold text-slate-900 leading-tight">
             {overallScore}%
           </span>
-          <span className="text-[10px] font-medium text-emerald-700 block mt-0.5">
-            Verified
+          <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full inline-block mt-0.5 border border-emerald-200">
+            Verified • சரிபார்க்கப்பட்டது
           </span>
         </div>
       )}
